@@ -1,0 +1,1636 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Vegan Places Finder - Tìm quán ăn chay</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script><!-- Canva SDKs -->
+    <script src="/_sdk/element_sdk.js"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Custom scrollbar */
+        .scroll-thin::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scroll-thin::-webkit-scrollbar-thumb {
+            background-color: rgba(34, 197, 94, 0.3);
+            border-radius: 999px;
+        }
+
+        .scroll-thin::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+        /* Smooth transitions */
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+
+        /* Hover lift effect */
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(34, 197, 94, 0.2);
+        }
+
+        /* Badge pulse animation */
+        @keyframes pulse-green {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .pulse-green {
+            animation: pulse-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+    <style>
+        @view-transition {
+            navigation: auto;
+        }
+    </style>
+    <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+</head>
+
+<body class="h-full w-full bg-[#F0FDF4]">
+    <header class="w-full"><!-- Sticky Navbar -->
+        <nav class="w-full bg-white/95 backdrop-blur-md border-b border-green-100 sticky top-0 z-20 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between"><!-- Logo + Name -->
+                <div class="flex items-center gap-3">
+                    <div
+                        class="h-10 w-10 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-md">
+                        <span class="text-2xl">🌱</span>
+                    </div>
+                    <div class="flex flex-col leading-tight"><span id="brand-title"
+                            class="text-base font-bold text-gray-900 tracking-tight"> Vegan Places Finder </span> <span
+                            class="text-xs text-green-600 font-medium">Ăn chay - Sống khỏe 🍃</span>
+                    </div>
+                </div><!-- Nav links -->
+                <div class="hidden md:flex items-center gap-2 text-sm font-medium text-gray-600"><button
+                        data-page="home"
+                        class="nav-link px-4 py-2 rounded-xl hover:bg-green-50 text-gray-800 transition-all"> 🏠 Trang
+                        chủ </button> <button data-page="shops"
+                        class="nav-link px-4 py-2 rounded-xl hover:bg-green-50 transition-all"> 🍜 Danh sách </button>
+                    <button data-page="map" class="nav-link px-4 py-2 rounded-xl hover:bg-green-50 transition-all"> 🗺️
+                        Bản đồ </button> <button data-page="analytics"
+                        class="nav-link px-4 py-2 rounded-xl hover:bg-green-50 transition-all"> 📊 Thống kê </button>
+                    <button data-page="admin" class="nav-link px-4 py-2 rounded-xl hover:bg-green-50 transition-all"
+                        id="admin-nav"> ⚙️ Quản lý </button>
+                </div><!-- Right actions -->
+                <div class="flex items-center gap-3"><!-- Guest state -->
+                    <div id="auth-guest" class="flex items-center gap-2 text-sm"><button data-page="auth"
+                            class="nav-link px-4 py-2 rounded-xl text-green-700 border border-green-200 bg-green-50 hover:bg-green-100 font-medium transition-all">
+                            Đăng nhập </button> <button
+                            class="px-4 py-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 text-sm font-medium shadow-md transition-all">
+                            Đăng ký </button>
+                    </div><!-- Logged-in state -->
+                    <div id="auth-user" class="hidden items-center gap-3"><button
+                            class="px-4 py-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 text-sm font-medium shadow-md transition-all">
+                            + Thêm địa điểm </button>
+                        <div class="relative"><button id="avatar-btn"
+                                class="flex items-center gap-2 px-3 py-2 rounded-2xl hover:bg-green-50 border border-green-100 transition-all">
+                                <div
+                                    class="h-8 w-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-sm font-bold text-white">
+                                    A
+                                </div><span class="text-sm font-medium text-gray-700 hidden sm:inline">Admin</span>
+                                <svg class="h-4 w-4 text-gray-500" viewbox="0 0 24 24" aria-hidden="true">
+                                    <path fill="currentColor" d="M7 10l5 5 5-5z" />
+                                </svg>
+                            </button>
+                            <div id="avatar-menu"
+                                class="hidden absolute right-0 mt-2 w-44 rounded-2xl bg-white shadow-xl border border-green-100 py-2 text-sm">
+                                <button class="w-full text-left px-4 py-2 hover:bg-green-50 transition-all">👤 Hồ
+                                    sơ</button> <button
+                                    class="w-full text-left px-4 py-2 hover:bg-green-50 transition-all">⚙️ Cài
+                                    đặt</button> <button id="logout-btn"
+                                    class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition-all"> 🚪
+                                    Đăng xuất </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main class="w-full min-h-full">
+        <div class="max-w-7xl mx-auto px-4 py-6 md:py-10 space-y-10" id="page-container"><!-- HOME PAGE -->
+            <section id="page-home" class="page-section space-y-12"><!-- Hero -->
+                <section
+                    class="rounded-3xl bg-gradient-to-br from-green-50 via-white to-emerald-50 px-8 md:px-12 py-10 md:py-14 flex flex-col md:flex-row gap-10 items-center shadow-lg border border-green-100 hover-lift transition-all">
+                    <!-- Text -->
+                    <div class="flex-1 space-y-5">
+                        <div
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-100 border border-green-200 text-sm font-medium text-green-700">
+                            <span class="h-2 w-2 rounded-full bg-green-500 pulse-green"></span> 100% Thuần chay •
+                            Organic • Healthy
+                        </div>
+                        <h1 id="hero-title"
+                            class="text-3xl md:text-4xl font-bold text-gray-900 leading-tight tracking-tight">Khám phá
+                            thế giới ẩm thực chay 🌱</h1>
+                        <p id="hero-subtitle" class="text-base md:text-lg text-gray-600 max-w-2xl leading-relaxed">Tìm
+                            kiếm quán ăn chay, cửa hàng nguyên liệu hữu cơ và cafe thuần chay gần bạn. Với menu chi
+                            tiết, đánh giá thực tế và bản đồ trực quan.</p>
+                        <div class="flex flex-wrap items-center gap-4 pt-3"><button
+                                class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-600 text-white text-base font-semibold shadow-lg hover:from-green-600 hover:to-emerald-700 hover:shadow-xl transition-all"
+                                data-page="shops"> <span id="hero-cta-text">🍜 Khám phá quán ăn chay</span>
+                                <svg class="h-5 w-5" viewbox="0 0 24 24" aria-hidden="true">
+                                    <path fill="currentColor" d="M5 12h12M13 6l6 6-6 6" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg></button> <button
+                                class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white text-green-700 text-base font-semibold border-2 border-green-200 hover:bg-green-50 hover:border-green-300 transition-all"
+                                data-page="map"> 🗺️ Xem bản đồ </button>
+                        </div><!-- Stats -->
+                        <div class="flex flex-wrap gap-6 pt-6 text-sm">
+                            <div class="flex items-center gap-2">
+                                <div class="h-10 w-10 rounded-xl bg-green-100 flex items-center justify-center text-lg">
+                                    🍜
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-900">52+</p>
+                                    <p class="text-xs text-gray-500">Quán ăn chay</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center text-lg">
+                                    🛒
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-900">28+</p>
+                                    <p class="text-xs text-gray-500">Cửa hàng nguyên liệu</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="h-10 w-10 rounded-xl bg-amber-100 flex items-center justify-center text-lg">
+                                    ☕
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-900">15+</p>
+                                    <p class="text-xs text-gray-500">Cafe chay</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- Illustration -->
+                    <div class="flex-1 w-full max-w-lg">
+                        <div
+                            class="relative rounded-3xl bg-white border-2 border-green-100 shadow-xl p-5 hover-lift transition-all">
+                            <!-- Fake map -->
+                            <div
+                                class="rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 h-48 md:h-56 relative overflow-hidden">
+                                <!-- Grid -->
+                                <div class="absolute inset-0 opacity-40">
+                                    <div
+                                        class="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#86efac_1px,transparent_0)] bg-[length:24px_24px]">
+                                    </div>
+                                </div><!-- Markers -->
+                                <div class="absolute top-8 left-12 flex flex-col items-center gap-1">
+                                    <div
+                                        class="h-8 w-8 rounded-2xl bg-green-500 shadow-lg flex items-center justify-center text-white text-xs font-bold animate-bounce">
+                                        🍜
+                                    </div><span
+                                        class="text-[10px] font-medium text-gray-700 bg-white px-2 py-0.5 rounded-full shadow-sm">Quán
+                                        chay</span>
+                                </div>
+                                <div class="absolute bottom-12 right-14 flex flex-col items-center gap-1">
+                                    <div class="h-8 w-8 rounded-2xl bg-blue-500 shadow-lg flex items-center justify-center text-white text-xs font-bold"
+                                        style="animation: bounce 1s infinite 0.2s;">
+                                        🛒
+                                    </div><span
+                                        class="text-[10px] font-medium text-gray-700 bg-white px-2 py-0.5 rounded-full shadow-sm">Cửa
+                                        hàng</span>
+                                </div>
+                                <div class="absolute top-1/2 right-8 flex flex-col items-center gap-1">
+                                    <div class="h-8 w-8 rounded-2xl bg-amber-500 shadow-lg flex items-center justify-center text-white text-xs font-bold"
+                                        style="animation: bounce 1s infinite 0.4s;">
+                                        ☕
+                                    </div><span
+                                        class="text-[10px] font-medium text-gray-700 bg-white px-2 py-0.5 rounded-full shadow-sm">Cafe</span>
+                                </div>
+                            </div><!-- List preview -->
+                            <div class="mt-4 space-y-2 text-xs">
+                                <div
+                                    class="flex items-center justify-between px-4 py-3 rounded-2xl bg-green-50 border border-green-100 hover:bg-green-100 transition-all cursor-pointer">
+                                    <div class="flex items-center gap-3"><span class="text-xl">🍜</span>
+                                        <div>
+                                            <p class="font-bold text-gray-800">Chay Tịnh Tâm</p>
+                                            <p class="text-[11px] text-gray-500">Cơm chay • 800m • ⭐ 4.8</p>
+                                        </div>
+                                    </div><span
+                                        class="px-3 py-1 rounded-full bg-green-200 text-[10px] text-green-800 font-bold">
+                                        Mở cửa </span>
+                                </div>
+                                <div
+                                    class="flex items-center justify-between px-4 py-3 rounded-2xl bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-all cursor-pointer">
+                                    <div class="flex items-center gap-3"><span class="text-xl">🛒</span>
+                                        <div>
+                                            <p class="font-bold text-gray-800">Organic Store 24/7</p>
+                                            <p class="text-[11px] text-gray-500">Nguyên liệu • 1.2km • ⭐ 4.9</p>
+                                        </div>
+                                    </div><span
+                                        class="px-3 py-1 rounded-full bg-blue-200 text-[10px] text-blue-800 font-bold">
+                                        Organic </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section><!-- Features -->
+                <section class="space-y-6">
+                    <div class="text-center space-y-2">
+                        <h2 id="feature-section-title" class="text-2xl md:text-3xl font-bold text-gray-900">✨ Tính năng
+                            nổi bật</h2>
+                        <p class="text-base text-gray-600 max-w-2xl mx-auto">Hệ thống tìm kiếm và quản lý địa điểm ăn
+                            chay toàn diện với công nghệ hiện đại</p>
+                    </div>
+                    <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-4"><!-- Feature 1 -->
+                        <article
+                            class="rounded-2xl bg-white border-2 border-green-100 shadow-md p-6 flex flex-col gap-4 hover-lift transition-all">
+                            <div
+                                class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-green-100 to-green-200 text-2xl">
+                                🍜
+                            </div>
+                            <h3 class="text-base font-bold text-gray-900">Menu chi tiết</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed">Xem menu đầy đủ với hình ảnh, giá cả,
+                                nguyên liệu và đánh giá từng món ăn chay.</p>
+                        </article><!-- Feature 2 -->
+                        <article
+                            class="rounded-2xl bg-white border-2 border-blue-100 shadow-md p-6 flex flex-col gap-4 hover-lift transition-all">
+                            <div
+                                class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-100 to-blue-200 text-2xl">
+                                🛒
+                            </div>
+                            <h3 class="text-base font-bold text-gray-900">Cửa hàng nguyên liệu</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed">Tìm nơi bán nguyên liệu chay organic, đậu
+                                hũ, rau củ hữu cơ gần bạn nhất.</p>
+                        </article><!-- Feature 3 -->
+                        <article
+                            class="rounded-2xl bg-white border-2 border-amber-100 shadow-md p-6 flex flex-col gap-4 hover-lift transition-all">
+                            <div
+                                class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-100 to-amber-200 text-2xl">
+                                🗺️
+                            </div>
+                            <h3 class="text-base font-bold text-gray-900">Bản đồ tương tác</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed">Marker phân loại rõ ràng: quán ăn, cửa
+                                hàng, cafe với chỉ đường Google Maps.</p>
+                        </article><!-- Feature 4 -->
+                        <article
+                            class="rounded-2xl bg-white border-2 border-purple-100 shadow-md p-6 flex flex-col gap-4 hover-lift transition-all">
+                            <div
+                                class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-100 to-purple-200 text-2xl">
+                                ⭐
+                            </div>
+                            <h3 class="text-base font-bold text-gray-900">Đánh giá &amp; Review</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed">Xem rating, nhận xét thực tế từ cộng đồng
+                                người ăn chay Việt Nam.</p>
+                        </article>
+                    </div>
+                </section><!-- Categories -->
+                <section class="space-y-6">
+                    <div class="text-center space-y-2">
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-900">🏪 Danh mục địa điểm</h2>
+                        <p class="text-base text-gray-600">Khám phá các loại hình kinh doanh chay đa dạng</p>
+                    </div>
+                    <div class="grid gap-4 md:grid-cols-3">
+                        <div class="rounded-2xl bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 p-6 hover-lift transition-all cursor-pointer"
+                            data-page="shops">
+                            <div class="flex items-center gap-4 mb-3">
+                                <div
+                                    class="h-14 w-14 rounded-2xl bg-white shadow-md flex items-center justify-center text-3xl">
+                                    🍜
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-900">Quán ăn chay</h3>
+                                    <p class="text-sm text-gray-600">52 địa điểm</p>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-3">Cơm chay, bún chay, phở chay, lẩu chay và các món ăn
+                                thuần chay đa dạng</p>
+                            <div class="flex flex-wrap gap-2"><span
+                                    class="px-3 py-1 rounded-full bg-white text-xs font-medium text-gray-700">Cơm
+                                    chay</span> <span
+                                    class="px-3 py-1 rounded-full bg-white text-xs font-medium text-gray-700">Bún
+                                    chay</span> <span
+                                    class="px-3 py-1 rounded-full bg-white text-xs font-medium text-gray-700">Lẩu
+                                    chay</span>
+                            </div>
+                        </div>
+                        <div class="rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 p-6 hover-lift transition-all cursor-pointer"
+                            data-page="shops">
+                            <div class="flex items-center gap-4 mb-3">
+                                <div
+                                    class="h-14 w-14 rounded-2xl bg-white shadow-md flex items-center justify-center text-3xl">
+                                    🛒
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-900">Cửa hàng nguyên liệu</h3>
+                                    <p class="text-sm text-gray-600">28 địa điểm</p>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-3">Rau củ organic, đậu hũ, nấm, gia vị chay và thực phẩm
+                                hữu cơ</p>
+                            <div class="flex flex-wrap gap-2"><span
+                                    class="px-3 py-1 rounded-full bg-white text-xs font-medium text-gray-700">Organic</span>
+                                <span class="px-3 py-1 rounded-full bg-white text-xs font-medium text-gray-700">Đậu
+                                    hũ</span> <span
+                                    class="px-3 py-1 rounded-full bg-white text-xs font-medium text-gray-700">Nấm</span>
+                            </div>
+                        </div>
+                        <div class="rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-200 p-6 hover-lift transition-all cursor-pointer"
+                            data-page="shops">
+                            <div class="flex items-center gap-4 mb-3">
+                                <div
+                                    class="h-14 w-14 rounded-2xl bg-white shadow-md flex items-center justify-center text-3xl">
+                                    ☕
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-900">Cafe &amp; Dessert</h3>
+                                    <p class="text-sm text-gray-600">15 địa điểm</p>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-3">Cafe chay, bánh ngọt thuần chay, sinh tố và đồ uống
+                                healthy</p>
+                            <div class="flex flex-wrap gap-2"><span
+                                    class="px-3 py-1 rounded-full bg-white text-xs font-medium text-gray-700">Cafe</span>
+                                <span
+                                    class="px-3 py-1 rounded-full bg-white text-xs font-medium text-gray-700">Bánh</span>
+                                <span class="px-3 py-1 rounded-full bg-white text-xs font-medium text-gray-700">Sinh
+                                    tố</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section><!-- SHOPS LIST PAGE -->
+            <section id="page-shops" class="page-section hidden space-y-6">
+                <header class="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-900">🍜 Danh sách địa điểm chay</h2>
+                        <p class="text-base text-gray-600 mt-1">Quản lý quán ăn chay, cửa hàng nguyên liệu và cafe thuần
+                            chay</p>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm"><button
+                            class="px-4 py-2 rounded-xl border-2 border-green-500 text-green-700 bg-green-50 font-medium hover:bg-green-100 transition-all">
+                            📋 Dạng bảng </button> <button
+                            class="px-4 py-2 rounded-xl border border-gray-200 text-gray-600 bg-white hover:bg-gray-50 transition-all">
+                            🎴 Dạng card </button>
+                    </div>
+                </header><!-- Toolbar -->
+                <section
+                    class="rounded-2xl bg-white border-2 border-green-100 shadow-md p-5 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
+                    <form class="flex-1 flex items-center gap-3" onsubmit="event.preventDefault();">
+                        <div class="relative flex-1"><label class="sr-only" for="search-shops">Tìm kiếm địa điểm</label>
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"> 🔍 </span>
+                            <input id="search-shops" type="text"
+                                class="w-full rounded-xl border-2 border-gray-200 pl-12 pr-4 py-3 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                                placeholder="Tìm theo tên, địa chỉ, món ăn...">
+                        </div>
+                    </form>
+                    <div class="flex flex-wrap items-center gap-3 text-sm">
+                        <div class="flex items-center gap-2"><label class="text-gray-600 font-medium"
+                                for="filter-type">Loại:</label> <select id="filter-type"
+                                class="rounded-xl border-2 border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-green-500 transition-all">
+                                <option>🌟 Tất cả</option>
+                                <option>🍜 Quán ăn chay</option>
+                                <option>🛒 Cửa hàng nguyên liệu</option>
+                                <option>☕ Cafe &amp; Dessert</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2"><label class="text-gray-600 font-medium"
+                                for="filter-status">Trạng thái:</label> <select id="filter-status"
+                                class="rounded-xl border-2 border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-green-500 transition-all">
+                                <option>Tất cả</option>
+                                <option>Đang mở cửa</option>
+                                <option>Đã đóng cửa</option>
+                            </select>
+                        </div>
+                    </div>
+                </section><!-- Table -->
+                <section class="rounded-2xl bg-white border-2 border-green-100 shadow-md overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-sm">
+                            <thead
+                                class="bg-gradient-to-r from-green-50 to-emerald-50 border-b-2 border-green-100 text-gray-700 font-bold">
+                                <tr>
+                                    <th scope="col" class="px-5 py-4 text-left">Địa điểm</th>
+                                    <th scope="col" class="px-5 py-4 text-left">Loại hình</th>
+                                    <th scope="col" class="px-5 py-4 text-left">Địa chỉ</th>
+                                    <th scope="col" class="px-5 py-4 text-left">Trạng thái</th>
+                                    <th scope="col" class="px-5 py-4 text-left">Đánh giá</th>
+                                    <th scope="col" class="px-5 py-4 text-left">Khoảng cách</th>
+                                    <th scope="col" class="px-5 py-4 text-right">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-green-50 text-gray-700"><!-- Row 1: Restaurant -->
+                                <tr class="hover:bg-green-50/50 transition-all">
+                                    <td class="px-5 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="h-12 w-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center text-2xl shadow-sm">
+                                                🍜
+                                            </div>
+                                            <div>
+                                                <p class="font-bold text-gray-900">Chay Tịnh Tâm</p>
+                                                <p class="text-xs text-gray-500">ID: #V001</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-5 py-4"><span
+                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-green-100 text-xs font-bold text-green-700 border border-green-200">
+                                            🍜 Quán ăn </span></td>
+                                    <td class="px-5 py-4 text-sm text-gray-600">123 Lê Văn Sỹ, Q.3</td>
+                                    <td class="px-5 py-4"><span
+                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
+                                            <span class="h-2 w-2 rounded-full bg-emerald-500 pulse-green"></span> Đang
+                                            mở </span></td>
+                                    <td class="px-5 py-4">
+                                        <div class="flex items-center gap-1"><span class="text-amber-500">⭐</span> <span
+                                                class="font-bold text-gray-900">4.8</span> <span
+                                                class="text-xs text-gray-500">(124)</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-5 py-4 text-sm text-gray-600">800m</td>
+                                    <td class="px-5 py-4">
+                                        <div class="flex justify-end gap-2"><button data-page="shop-detail"
+                                                class="px-3 py-1.5 rounded-xl border-2 border-green-200 text-xs text-green-700 bg-green-50 font-medium hover:bg-green-100 transition-all">
+                                                👁️ Xem </button> <button
+                                                class="px-3 py-1.5 rounded-xl border border-gray-200 text-xs text-gray-700 bg-white hover:bg-gray-50 transition-all">
+                                                ✏️ Sửa </button>
+                                        </div>
+                                    </td>
+                                </tr><!-- Row 2: Store -->
+                                <tr class="hover:bg-blue-50/50 transition-all">
+                                    <td class="px-5 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-2xl shadow-sm">
+                                                🛒
+                                            </div>
+                                            <div>
+                                                <p class="font-bold text-gray-900">Organic Store 24/7</p>
+                                                <p class="text-xs text-gray-500">ID: #S005</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-5 py-4"><span
+                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-blue-100 text-xs font-bold text-blue-700 border border-blue-200">
+                                            🛒 Cửa hàng </span></td>
+                                    <td class="px-5 py-4 text-sm text-gray-600">45 Nguyễn Trãi, Q.1</td>
+                                    <td class="px-5 py-4"><span
+                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
+                                            <span class="h-2 w-2 rounded-full bg-emerald-500 pulse-green"></span> Đang
+                                            mở </span></td>
+                                    <td class="px-5 py-4">
+                                        <div class="flex items-center gap-1"><span class="text-amber-500">⭐</span> <span
+                                                class="font-bold text-gray-900">4.9</span> <span
+                                                class="text-xs text-gray-500">(89)</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-5 py-4 text-sm text-gray-600">1.2km</td>
+                                    <td class="px-5 py-4">
+                                        <div class="flex justify-end gap-2"><button data-page="shop-detail"
+                                                class="px-3 py-1.5 rounded-xl border-2 border-blue-200 text-xs text-blue-700 bg-blue-50 font-medium hover:bg-blue-100 transition-all">
+                                                👁️ Xem </button> <button
+                                                class="px-3 py-1.5 rounded-xl border border-gray-200 text-xs text-gray-700 bg-white hover:bg-gray-50 transition-all">
+                                                ✏️ Sửa </button>
+                                        </div>
+                                    </td>
+                                </tr><!-- Row 3: Cafe -->
+                                <tr class="hover:bg-amber-50/50 transition-all">
+                                    <td class="px-5 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="h-12 w-12 rounded-2xl bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center text-2xl shadow-sm">
+                                                ☕
+                                            </div>
+                                            <div>
+                                                <p class="font-bold text-gray-900">Vegan Cafe &amp; Bakery</p>
+                                                <p class="text-xs text-gray-500">ID: #C012</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-5 py-4"><span
+                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-amber-100 text-xs font-bold text-amber-700 border border-amber-200">
+                                            ☕ Cafe </span></td>
+                                    <td class="px-5 py-4 text-sm text-gray-600">88 Pasteur, Q.1</td>
+                                    <td class="px-5 py-4"><span
+                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-gray-100 text-xs font-bold text-gray-600">
+                                            <span class="h-2 w-2 rounded-full bg-gray-400"></span> Đã đóng </span></td>
+                                    <td class="px-5 py-4">
+                                        <div class="flex items-center gap-1"><span class="text-amber-500">⭐</span> <span
+                                                class="font-bold text-gray-900">4.7</span> <span
+                                                class="text-xs text-gray-500">(56)</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-5 py-4 text-sm text-gray-600">2.1km</td>
+                                    <td class="px-5 py-4">
+                                        <div class="flex justify-end gap-2"><button data-page="shop-detail"
+                                                class="px-3 py-1.5 rounded-xl border-2 border-amber-200 text-xs text-amber-700 bg-amber-50 font-medium hover:bg-amber-100 transition-all">
+                                                👁️ Xem </button> <button
+                                                class="px-3 py-1.5 rounded-xl border border-gray-200 text-xs text-gray-700 bg-white hover:bg-gray-50 transition-all">
+                                                ✏️ Sửa </button>
+                                        </div>
+                                    </td>
+                                </tr><!-- Row 4: Restaurant 2 -->
+                                <tr class="hover:bg-green-50/50 transition-all">
+                                    <td class="px-5 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="h-12 w-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center text-2xl shadow-sm">
+                                                🍜
+                                            </div>
+                                            <div>
+                                                <p class="font-bold text-gray-900">Bún Chay Hương Sen</p>
+                                                <p class="text-xs text-gray-500">ID: #V018</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-5 py-4"><span
+                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-green-100 text-xs font-bold text-green-700 border border-green-200">
+                                            🍜 Quán ăn </span></td>
+                                    <td class="px-5 py-4 text-sm text-gray-600">234 Võ Văn Tần, Q.3</td>
+                                    <td class="px-5 py-4"><span
+                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
+                                            <span class="h-2 w-2 rounded-full bg-emerald-500 pulse-green"></span> Đang
+                                            mở </span></td>
+                                    <td class="px-5 py-4">
+                                        <div class="flex items-center gap-1"><span class="text-amber-500">⭐</span> <span
+                                                class="font-bold text-gray-900">4.6</span> <span
+                                                class="text-xs text-gray-500">(78)</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-5 py-4 text-sm text-gray-600">1.5km</td>
+                                    <td class="px-5 py-4">
+                                        <div class="flex justify-end gap-2"><button data-page="shop-detail"
+                                                class="px-3 py-1.5 rounded-xl border-2 border-green-200 text-xs text-green-700 bg-green-50 font-medium hover:bg-green-100 transition-all">
+                                                👁️ Xem </button> <button
+                                                class="px-3 py-1.5 rounded-xl border border-gray-200 text-xs text-gray-700 bg-white hover:bg-gray-50 transition-all">
+                                                ✏️ Sửa </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div><!-- Pagination -->
+                    <div
+                        class="flex items-center justify-between px-5 py-4 border-t-2 border-green-100 bg-green-50/30 text-sm text-gray-600">
+                        <span class="font-medium">Hiển thị 1-10 trong 95 địa điểm</span>
+                        <div class="flex items-center gap-2"><button
+                                class="px-3 py-1.5 rounded-xl border-2 border-gray-200 bg-white hover:bg-gray-50 font-medium transition-all">
+                                ← Trước </button> <button
+                                class="px-3 py-1.5 rounded-xl border-2 border-green-500 bg-green-500 text-white font-bold">
+                                1 </button> <button
+                                class="px-3 py-1.5 rounded-xl border-2 border-gray-200 bg-white hover:bg-gray-50 font-medium transition-all">
+                                2 </button> <button
+                                class="px-3 py-1.5 rounded-xl border-2 border-gray-200 bg-white hover:bg-gray-50 font-medium transition-all">
+                                3 </button> <button
+                                class="px-3 py-1.5 rounded-xl border-2 border-gray-200 bg-white hover:bg-gray-50 font-medium transition-all">
+                                Sau → </button>
+                        </div>
+                    </div>
+                </section>
+            </section><!-- SHOP DETAIL PAGE -->
+            <section id="page-shop-detail" class="page-section hidden space-y-6"><!-- Hero -->
+                <section class="rounded-3xl bg-white border-2 border-green-100 shadow-xl overflow-hidden">
+                    <div class="h-48 md:h-64 bg-gradient-to-br from-green-400 via-emerald-500 to-green-600 relative">
+                        <div class="absolute inset-0 opacity-20">
+                            <div
+                                class="h-full w-full bg-[radial-gradient(circle_at_30px_30px,#ffffff_2px,transparent_0)] bg-[length:60px_60px]">
+                            </div>
+                        </div>
+                        <div class="absolute bottom-5 left-6 right-6 flex items-end justify-between gap-4">
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2"><span class="text-4xl">🍜</span>
+                                    <h1 class="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">Chay Tịnh Tâm
+                                    </h1>
+                                </div>
+                                <p class="text-sm md:text-base text-white/95 max-w-2xl drop-shadow">Quán cơm chay gia
+                                    đình với hơn 50 món ăn thuần chay, không MSG, nguyên liệu organic</p>
+                            </div>
+                            <div class="hidden md:flex flex-col items-end gap-2 text-sm text-white"><span
+                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30">
+                                    <span class="h-2.5 w-2.5 rounded-full bg-emerald-400 pulse-green"></span> <span
+                                        class="font-bold">Đang mở cửa</span> </span> <span
+                                    class="px-4 py-2 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 font-medium">
+                                    ⏰ 07:00 - 21:00 </span>
+                            </div>
+                        </div>
+                    </div><!-- Content -->
+                    <div class="p-6 md:p-8 space-y-6">
+                        <div class="flex flex-col lg:flex-row gap-6"><!-- Info -->
+                            <div class="flex-1 space-y-4 text-sm md:text-base">
+                                <div class="flex items-start gap-3">
+                                    <div class="mt-1 rounded-2xl bg-green-100 p-2 text-green-600">
+                                        <svg class="h-5 w-5" viewbox="0 0 24 24" aria-hidden="true">
+                                            <path fill="currentColor"
+                                                d="M12 2C8.69 2 6 4.69 6 8c0 4.1 4.34 9.39 5.62 10.86.22.25.54.39.88.39s.66-.14.88-.39C13.66 17.39 18 12.1 18 8c0-3.31-2.69-6-6-6zm0 8.5A2.5 2.5 0 1 1 12 5.5a2.5 2.5 0 0 1 0 5z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">📍 Địa chỉ</p>
+                                        <p class="text-gray-600">123 Lê Văn Sỹ, Phường 13, Quận 3, TP. HCM</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="mt-1 rounded-2xl bg-green-100 p-2 text-green-600">
+                                        <svg class="h-5 w-5" viewbox="0 0 24 24" aria-hidden="true">
+                                            <path fill="currentColor"
+                                                d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v3h18V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1h-2c0-.55.45-1 1-1zM3 19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V10H3v9z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">⏰ Giờ mở cửa</p>
+                                        <p class="text-gray-600">Thứ 2 - Chủ Nhật: 07:00 - 21:00</p>
+                                        <p class="text-xs text-green-600 font-medium mt-1">✓ Mở cửa cả ngày lễ, rằm,
+                                            mùng 1</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="mt-1 rounded-2xl bg-green-100 p-2 text-green-600">
+                                        <svg class="h-5 w-5" viewbox="0 0 24 24" aria-hidden="true">
+                                            <path fill="currentColor"
+                                                d="M6.62 10.79a15.053 15.053 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.07 21 3 13.93 3 5a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.46.57 3.59a1 1 0 0 1-.25 1.02z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">📞 Liên hệ</p>
+                                        <p class="text-gray-600">0123 456 789 • tinhtam.vegan@gmail.com</p>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap gap-2 pt-2"><span
+                                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-green-100 text-xs font-bold text-green-700 border border-green-200">
+                                        ✓ 100% Thuần chay </span> <span
+                                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-100 text-xs font-bold text-emerald-700 border border-emerald-200">
+                                        🌿 Organic </span> <span
+                                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-blue-100 text-xs font-bold text-blue-700 border border-blue-200">
+                                        🚫 Không MSG </span> <span
+                                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-amber-100 text-xs font-bold text-amber-700 border border-amber-200">
+                                        ⭐ 4.8 (124 đánh giá) </span>
+                                </div>
+                            </div><!-- Mini map -->
+                            <div class="w-full lg:w-80">
+                                <div
+                                    class="rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 h-48 relative overflow-hidden border-2 border-green-100">
+                                    <div
+                                        class="absolute top-2 left-2 px-3 py-1 rounded-full bg-white/90 text-xs text-gray-700 shadow-md font-medium">
+                                        📍 Map preview
+                                    </div>
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <div
+                                            class="h-16 w-16 rounded-full bg-white/80 shadow-xl flex items-center justify-center">
+                                            <div
+                                                class="h-12 w-12 rounded-2xl bg-green-500 text-white text-xl flex items-center justify-center font-bold">
+                                                🍜
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap gap-2 mt-4 text-sm"><button
+                                        class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold hover:from-green-600 hover:to-emerald-700 shadow-md transition-all">
+                                        <span>🗺️</span> Chỉ đường Google Maps </button>
+                                </div>
+                                <div class="flex gap-2 mt-2 text-sm"><button
+                                        class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl bg-white border-2 border-gray-200 text-gray-700 font-medium hover:bg-gray-50 transition-all">
+                                        ✏️ Chỉnh sửa </button> <button
+                                        class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl bg-white border-2 border-red-200 text-red-600 font-medium hover:bg-red-50 transition-all">
+                                        🗑️ Xoá </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section><!-- Menu Section -->
+                <section class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-2xl font-bold text-gray-900">🍽️ Menu món ăn</h2>
+                        <div class="flex items-center gap-2 text-sm"><button
+                                class="px-4 py-2 rounded-xl border-2 border-green-500 bg-green-50 text-green-700 font-bold">
+                                Tất cả </button> <button
+                                class="px-4 py-2 rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 transition-all">
+                                Món chính </button> <button
+                                class="px-4 py-2 rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 transition-all">
+                                Đồ uống </button>
+                        </div>
+                    </div><!-- Menu Grid -->
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5"><!-- Menu Item 1 -->
+                        <article
+                            class="rounded-2xl bg-white border-2 border-green-100 shadow-md overflow-hidden hover-lift transition-all">
+                            <div class="h-40 bg-gradient-to-br from-green-200 via-emerald-300 to-green-400 relative">
+                                <div class="absolute inset-0 flex items-center justify-center text-6xl">
+                                    🍚
+                                </div>
+                                <div
+                                    class="absolute top-2 right-2 px-3 py-1 rounded-full bg-red-500 text-white text-xs font-bold shadow-md">
+                                    🔥 Phổ biến
+                                </div>
+                            </div>
+                            <div class="p-4 space-y-3">
+                                <div class="flex items-start justify-between gap-2">
+                                    <h3 class="text-base font-bold text-gray-900">Cơm Tấm Chay Đặc Biệt</h3><span
+                                        class="text-lg font-bold text-green-600">45k</span>
+                                </div>
+                                <p class="text-sm text-gray-600 leading-relaxed">Cơm tấm, sườn chay nướng, chả chay, bì
+                                    chay, trứng ốp la chay, nước mắm chay</p>
+                                <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+                                    <div class="flex items-center gap-1 text-sm"><span class="text-amber-500">⭐</span>
+                                        <span class="font-bold text-gray-900">4.9</span> <span
+                                            class="text-xs text-gray-500">(89)</span>
+                                    </div><button
+                                        class="px-4 py-1.5 rounded-xl bg-green-500 text-white text-sm font-bold hover:bg-green-600 transition-all">
+                                        + Thêm </button>
+                                </div>
+                            </div>
+                        </article><!-- Menu Item 2 -->
+                        <article
+                            class="rounded-2xl bg-white border-2 border-green-100 shadow-md overflow-hidden hover-lift transition-all">
+                            <div class="h-40 bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-400 relative">
+                                <div class="absolute inset-0 flex items-center justify-center text-6xl">
+                                    🍜
+                                </div>
+                                <div
+                                    class="absolute top-2 right-2 px-3 py-1 rounded-full bg-green-500 text-white text-xs font-bold shadow-md">
+                                    ✨ Mới
+                                </div>
+                            </div>
+                            <div class="p-4 space-y-3">
+                                <div class="flex items-start justify-between gap-2">
+                                    <h3 class="text-base font-bold text-gray-900">Bún Bò Huế Chay</h3><span
+                                        class="text-lg font-bold text-green-600">40k</span>
+                                </div>
+                                <p class="text-sm text-gray-600 leading-relaxed">Bún tươi, nước dùng đậm đà từ nấm, sả,
+                                    bò chay, chả chay, giò chay</p>
+                                <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+                                    <div class="flex items-center gap-1 text-sm"><span class="text-amber-500">⭐</span>
+                                        <span class="font-bold text-gray-900">4.7</span> <span
+                                            class="text-xs text-gray-500">(45)</span>
+                                    </div><button
+                                        class="px-4 py-1.5 rounded-xl bg-green-500 text-white text-sm font-bold hover:bg-green-600 transition-all">
+                                        + Thêm </button>
+                                </div>
+                            </div>
+                        </article><!-- Menu Item 3 -->
+                        <article
+                            class="rounded-2xl bg-white border-2 border-green-100 shadow-md overflow-hidden hover-lift transition-all">
+                            <div class="h-40 bg-gradient-to-br from-red-200 via-pink-300 to-red-400 relative">
+                                <div class="absolute inset-0 flex items-center justify-center text-6xl">
+                                    🍲
+                                </div>
+                            </div>
+                            <div class="p-4 space-y-3">
+                                <div class="flex items-start justify-between gap-2">
+                                    <h3 class="text-base font-bold text-gray-900">Lẩu Thái Chay (2-3 người)</h3><span
+                                        class="text-lg font-bold text-green-600">180k</span>
+                                </div>
+                                <p class="text-sm text-gray-600 leading-relaxed">Nước lẩu chua cay thơm, nấm các loại,
+                                    đậu hũ, rau củ tươi, bún/miến</p>
+                                <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+                                    <div class="flex items-center gap-1 text-sm"><span class="text-amber-500">⭐</span>
+                                        <span class="font-bold text-gray-900">4.8</span> <span
+                                            class="text-xs text-gray-500">(67)</span>
+                                    </div><button
+                                        class="px-4 py-1.5 rounded-xl bg-green-500 text-white text-sm font-bold hover:bg-green-600 transition-all">
+                                        + Thêm </button>
+                                </div>
+                            </div>
+                        </article><!-- Menu Item 4 -->
+                        <article
+                            class="rounded-2xl bg-white border-2 border-green-100 shadow-md overflow-hidden hover-lift transition-all">
+                            <div class="h-40 bg-gradient-to-br from-purple-200 via-violet-300 to-purple-400 relative">
+                                <div class="absolute inset-0 flex items-center justify-center text-6xl">
+                                    🥗
+                                </div>
+                                <div
+                                    class="absolute top-2 right-2 px-3 py-1 rounded-full bg-emerald-500 text-white text-xs font-bold shadow-md">
+                                    💚 Healthy
+                                </div>
+                            </div>
+                            <div class="p-4 space-y-3">
+                                <div class="flex items-start justify-between gap-2">
+                                    <h3 class="text-base font-bold text-gray-900">Salad Rau Củ Organic</h3><span
+                                        class="text-lg font-bold text-green-600">35k</span>
+                                </div>
+                                <p class="text-sm text-gray-600 leading-relaxed">Rau xà lách, cà chua bi, dưa leo, cà
+                                    rốt, bắp cải tím, sốt mè rang</p>
+                                <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+                                    <div class="flex items-center gap-1 text-sm"><span class="text-amber-500">⭐</span>
+                                        <span class="font-bold text-gray-900">4.6</span> <span
+                                            class="text-xs text-gray-500">(34)</span>
+                                    </div><button
+                                        class="px-4 py-1.5 rounded-xl bg-green-500 text-white text-sm font-bold hover:bg-green-600 transition-all">
+                                        + Thêm </button>
+                                </div>
+                            </div>
+                        </article><!-- Menu Item 5 - Drink -->
+                        <article
+                            class="rounded-2xl bg-white border-2 border-amber-100 shadow-md overflow-hidden hover-lift transition-all">
+                            <div class="h-40 bg-gradient-to-br from-orange-200 via-amber-300 to-orange-400 relative">
+                                <div class="absolute inset-0 flex items-center justify-center text-6xl">
+                                    🥤
+                                </div>
+                            </div>
+                            <div class="p-4 space-y-3">
+                                <div class="flex items-start justify-between gap-2">
+                                    <h3 class="text-base font-bold text-gray-900">Sinh Tố Bơ Sữa Đậu Nành</h3><span
+                                        class="text-lg font-bold text-green-600">25k</span>
+                                </div>
+                                <p class="text-sm text-gray-600 leading-relaxed">Bơ tươi, sữa đậu nành organic, mật ong,
+                                    không đường tinh luyện</p>
+                                <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+                                    <div class="flex items-center gap-1 text-sm"><span class="text-amber-500">⭐</span>
+                                        <span class="font-bold text-gray-900">4.9</span> <span
+                                            class="text-xs text-gray-500">(112)</span>
+                                    </div><button
+                                        class="px-4 py-1.5 rounded-xl bg-amber-500 text-white text-sm font-bold hover:bg-amber-600 transition-all">
+                                        + Thêm </button>
+                                </div>
+                            </div>
+                        </article><!-- Menu Item 6 - Drink -->
+                        <article
+                            class="rounded-2xl bg-white border-2 border-amber-100 shadow-md overflow-hidden hover-lift transition-all">
+                            <div class="h-40 bg-gradient-to-br from-green-200 via-lime-300 to-green-400 relative">
+                                <div class="absolute inset-0 flex items-center justify-center text-6xl">
+                                    🍵
+                                </div>
+                            </div>
+                            <div class="p-4 space-y-3">
+                                <div class="flex items-start justify-between gap-2">
+                                    <h3 class="text-base font-bold text-gray-900">Trà Atiso Mật Ong</h3><span
+                                        class="text-lg font-bold text-green-600">20k</span>
+                                </div>
+                                <p class="text-sm text-gray-600 leading-relaxed">Trà atiso Đà Lạt, mật ong rừng, giải
+                                    nhiệt, thanh lọc cơ thể</p>
+                                <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+                                    <div class="flex items-center gap-1 text-sm"><span class="text-amber-500">⭐</span>
+                                        <span class="font-bold text-gray-900">4.5</span> <span
+                                            class="text-xs text-gray-500">(28)</span>
+                                    </div><button
+                                        class="px-4 py-1.5 rounded-xl bg-amber-500 text-white text-sm font-bold hover:bg-amber-600 transition-all">
+                                        + Thêm </button>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+            </section><!-- MAP PAGE -->
+            <section id="page-map" class="page-section hidden space-y-4">
+                <header class="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">🗺️ Bản đồ địa điểm chay</h2>
+                        <p class="text-base text-gray-600 mt-1">Xem vị trí quán ăn chay 🍜, cửa hàng nguyên liệu 🛒 và
+                            cafe ☕ trên bản đồ</p>
+                    </div>
+                </header>
+                <section class="rounded-3xl bg-white border-2 border-green-100 shadow-xl overflow-hidden">
+                    <div class="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] h-[500px]"><!-- Sidebar -->
+                        <aside
+                            class="border-r-2 border-green-100 h-full flex flex-col bg-gradient-to-b from-green-50/50 to-white">
+                            <div class="p-5 border-b-2 border-green-100 space-y-3 bg-white">
+                                <div class="flex items-center justify-between text-sm text-gray-600"><span
+                                        class="font-bold text-gray-900">🔍 Bộ lọc</span> <button
+                                        class="px-3 py-1.5 rounded-xl bg-gray-100 border border-gray-200 hover:bg-gray-200 text-xs font-medium transition-all">
+                                        Đặt lại </button>
+                                </div>
+                                <div class="space-y-3 text-sm">
+                                    <div><label class="block text-xs font-bold text-gray-700 mb-1.5"
+                                            for="filter-map-type">Loại địa điểm</label> <select id="filter-map-type"
+                                            class="w-full rounded-xl border-2 border-gray-200 bg-white px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-500 transition-all">
+                                            <option>🌟 Tất cả</option>
+                                            <option>🍜 Quán ăn chay</option>
+                                            <option>🛒 Cửa hàng nguyên liệu</option>
+                                            <option>☕ Cafe &amp; Dessert</option>
+                                        </select>
+                                    </div>
+                                    <div><label class="block text-xs font-bold text-gray-700 mb-1.5"
+                                            for="filter-radius">Bán kính tìm kiếm</label> <select id="filter-radius"
+                                            class="w-full rounded-xl border-2 border-gray-200 bg-white px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-500 transition-all">
+                                            <option>📍 Dưới 1 km</option>
+                                            <option>📍 Dưới 3 km</option>
+                                            <option>📍 Dưới 5 km</option>
+                                            <option>📍 Tất cả</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex-1 overflow-y-auto scroll-thin p-4 space-y-3 text-sm">
+                                <!-- List item 1 - Restaurant -->
+                                <div
+                                    class="rounded-2xl border-2 border-green-100 bg-white px-4 py-3 flex items-center justify-between hover:border-green-300 hover:shadow-md cursor-pointer transition-all">
+                                    <div class="flex items-center gap-3"><span class="text-2xl">🍜</span>
+                                        <div>
+                                            <p class="font-bold text-gray-900">Chay Tịnh Tâm</p>
+                                            <p class="text-xs text-gray-500">800m • Quán ăn • ⭐ 4.8</p>
+                                        </div>
+                                    </div><span
+                                        class="h-8 w-8 rounded-xl bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold border border-green-200">
+                                        Q1 </span>
+                                </div><!-- List item 2 - Store -->
+                                <div
+                                    class="rounded-2xl border-2 border-blue-100 bg-white px-4 py-3 flex items-center justify-between hover:border-blue-300 hover:shadow-md cursor-pointer transition-all">
+                                    <div class="flex items-center gap-3"><span class="text-2xl">🛒</span>
+                                        <div>
+                                            <p class="font-bold text-gray-900">Organic Store 24/7</p>
+                                            <p class="text-xs text-gray-500">1.2km • Cửa hàng • ⭐ 4.9</p>
+                                        </div>
+                                    </div><span
+                                        class="h-8 w-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold border border-blue-200">
+                                        S1 </span>
+                                </div><!-- List item 3 - Cafe -->
+                                <div
+                                    class="rounded-2xl border-2 border-amber-100 bg-white px-4 py-3 flex items-center justify-between hover:border-amber-300 hover:shadow-md cursor-pointer transition-all">
+                                    <div class="flex items-center gap-3"><span class="text-2xl">☕</span>
+                                        <div>
+                                            <p class="font-bold text-gray-900">Vegan Cafe &amp; Bakery</p>
+                                            <p class="text-xs text-gray-500">2.1km • Cafe • ⭐ 4.7</p>
+                                        </div>
+                                    </div><span
+                                        class="h-8 w-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-bold border border-amber-200">
+                                        C1 </span>
+                                </div><!-- List item 4 - Restaurant -->
+                                <div
+                                    class="rounded-2xl border-2 border-green-100 bg-white px-4 py-3 flex items-center justify-between hover:border-green-300 hover:shadow-md cursor-pointer transition-all">
+                                    <div class="flex items-center gap-3"><span class="text-2xl">🍜</span>
+                                        <div>
+                                            <p class="font-bold text-gray-900">Bún Chay Hương Sen</p>
+                                            <p class="text-xs text-gray-500">1.5km • Quán ăn • ⭐ 4.6</p>
+                                        </div>
+                                    </div><span
+                                        class="h-8 w-8 rounded-xl bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold border border-green-200">
+                                        Q2 </span>
+                                </div><!-- List item 5 - Store -->
+                                <div
+                                    class="rounded-2xl border-2 border-blue-100 bg-white px-4 py-3 flex items-center justify-between hover:border-blue-300 hover:shadow-md cursor-pointer transition-all">
+                                    <div class="flex items-center gap-3"><span class="text-2xl">🛒</span>
+                                        <div>
+                                            <p class="font-bold text-gray-900">Chợ Chay Bình Tây</p>
+                                            <p class="text-xs text-gray-500">3.2km • Cửa hàng • ⭐ 4.5</p>
+                                        </div>
+                                    </div><span
+                                        class="h-8 w-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold border border-blue-200">
+                                        S2 </span>
+                                </div>
+                            </div>
+                        </aside><!-- Map area -->
+                        <div class="relative h-full bg-gradient-to-br from-green-50 to-emerald-50">
+                            <!-- Placeholder -->
+                            <div
+                                class="absolute top-3 left-3 px-4 py-2 rounded-2xl bg-white/95 text-xs text-gray-700 shadow-lg font-bold border border-green-100">
+                                🗺️ Google Maps Fullscreen
+                            </div><!-- Legend -->
+                            <div
+                                class="absolute top-3 right-3 px-4 py-3 rounded-2xl bg-white/95 shadow-lg border border-green-100 text-xs space-y-1.5">
+                                <p class="font-bold text-gray-900 mb-2">Chú thích:</p>
+                                <div class="flex items-center gap-2"><span
+                                        class="h-6 w-6 rounded-lg bg-green-500 text-white flex items-center justify-center text-[10px] font-bold">Q</span>
+                                    <span class="text-gray-700">Quán ăn chay</span>
+                                </div>
+                                <div class="flex items-center gap-2"><span
+                                        class="h-6 w-6 rounded-lg bg-blue-500 text-white flex items-center justify-center text-[10px] font-bold">S</span>
+                                    <span class="text-gray-700">Cửa hàng</span>
+                                </div>
+                                <div class="flex items-center gap-2"><span
+                                        class="h-6 w-6 rounded-lg bg-amber-500 text-white flex items-center justify-center text-[10px] font-bold">C</span>
+                                    <span class="text-gray-700">Cafe</span>
+                                </div>
+                            </div><!-- Markers -->
+                            <div class="absolute top-1/4 left-1/4">
+                                <div
+                                    class="h-10 w-10 rounded-2xl bg-green-500 text-white text-sm flex items-center justify-center shadow-xl cursor-pointer hover:scale-110 transition-all font-bold border-2 border-white">
+                                    Q1
+                                </div>
+                            </div>
+                            <div class="absolute top-1/3 right-1/3">
+                                <div
+                                    class="h-10 w-10 rounded-2xl bg-blue-500 text-white text-sm flex items-center justify-center shadow-xl cursor-pointer hover:scale-110 transition-all font-bold border-2 border-white">
+                                    S1
+                                </div>
+                            </div>
+                            <div class="absolute bottom-1/3 right-1/4">
+                                <div
+                                    class="h-10 w-10 rounded-2xl bg-amber-500 text-white text-sm flex items-center justify-center shadow-xl cursor-pointer hover:scale-110 transition-all font-bold border-2 border-white">
+                                    C1
+                                </div>
+                            </div>
+                            <div class="absolute top-1/2 left-1/3">
+                                <div
+                                    class="h-10 w-10 rounded-2xl bg-green-500 text-white text-sm flex items-center justify-center shadow-xl cursor-pointer hover:scale-110 transition-all font-bold border-2 border-white">
+                                    Q2
+                                </div>
+                            </div><!-- Modal detail -->
+                            <div class="absolute bottom-5 left-5 right-5 lg:right-auto lg:w-80">
+                                <div
+                                    class="rounded-2xl bg-white/98 border-2 border-green-200 shadow-2xl p-4 text-sm space-y-3">
+                                    <div class="flex items-start gap-3"><span class="text-3xl">🍜</span>
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between gap-2 mb-1">
+                                                <p class="font-bold text-gray-900 text-base">Chay Tịnh Tâm</p><span
+                                                    class="px-2 py-1 rounded-full bg-green-100 text-[10px] text-green-700 font-bold border border-green-200">
+                                                    Đang mở </span>
+                                            </div>
+                                            <p class="text-xs text-gray-600 mb-2">123 Lê Văn Sỹ, Q.3 • 800m</p>
+                                            <div class="flex items-center gap-1 mb-2"><span
+                                                    class="text-amber-500">⭐</span> <span
+                                                    class="font-bold text-gray-900">4.8</span> <span
+                                                    class="text-xs text-gray-500">(124 đánh giá)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2 pt-2 border-t border-gray-100"><button
+                                            data-page="shop-detail"
+                                            class="flex-1 px-4 py-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-bold hover:from-green-600 hover:to-emerald-700 transition-all">
+                                            👁️ Xem menu </button> <button
+                                            class="px-4 py-2 rounded-xl bg-white border-2 border-green-200 text-sm text-green-700 font-bold hover:bg-green-50 transition-all">
+                                            🗺️ Chỉ đường </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section><!-- ADMIN DASHBOARD PAGE -->
+            <section id="page-admin" class="page-section hidden space-y-5">
+                <header class="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">⚙️ Dashboard quản lý</h2>
+                        <p class="text-base text-gray-600 mt-1">Tổng quan hệ thống và quản lý địa điểm chay</p>
+                    </div>
+                </header>
+                <section class="rounded-3xl bg-white border-2 border-green-100 shadow-xl overflow-hidden">
+                    <div class="grid lg:grid-cols-[minmax(0,0.8fr)_minmax(0,2.2fr)] h-[480px]"><!-- Sidebar -->
+                        <aside
+                            class="border-r-2 border-green-100 h-full flex flex-col bg-gradient-to-b from-green-50/30 to-white">
+                            <div class="p-5 border-b-2 border-green-100 bg-white">
+                                <p class="text-sm font-bold text-gray-900">🌱 Admin Panel</p>
+                            </div>
+                            <nav class="flex-1 p-3 text-sm space-y-2"><button
+                                    class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold shadow-md">
+                                    <span
+                                        class="h-8 w-8 rounded-xl bg-white/20 flex items-center justify-center text-base">
+                                        🍜 </span> <span>Địa điểm chay</span> </button> <button
+                                    class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-green-50 text-gray-700 font-medium transition-all">
+                                    <span
+                                        class="h-8 w-8 rounded-xl bg-gray-100 flex items-center justify-center text-base">
+                                        👥 </span> <span>Người dùng</span> </button> <button
+                                    class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-green-50 text-gray-700 font-medium transition-all">
+                                    <span
+                                        class="h-8 w-8 rounded-xl bg-gray-100 flex items-center justify-center text-base">
+                                        📊 </span> <span>Thống kê</span> </button> <button
+                                    class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-green-50 text-gray-700 font-medium transition-all">
+                                    <span
+                                        class="h-8 w-8 rounded-xl bg-gray-100 flex items-center justify-center text-base">
+                                        ⚙️ </span> <span>Cài đặt</span> </button>
+                            </nav>
+                        </aside><!-- Main area -->
+                        <div class="h-full flex flex-col p-6 space-y-5 overflow-y-auto scroll-thin"><!-- Stats cards -->
+                            <div class="grid sm:grid-cols-3 gap-4">
+                                <div
+                                    class="rounded-2xl border-2 border-green-100 bg-gradient-to-br from-green-50 to-white p-5 flex flex-col gap-2 hover-lift transition-all">
+                                    <div class="flex items-center gap-2"><span class="text-2xl">🍜</span>
+                                        <p class="text-xs font-bold text-gray-600">Tổng địa điểm</p>
+                                    </div>
+                                    <p class="text-3xl font-bold text-gray-900">95</p>
+                                    <p class="text-xs text-green-600 font-medium">+8 tuần này 📈</p>
+                                </div>
+                                <div
+                                    class="rounded-2xl border-2 border-blue-100 bg-gradient-to-br from-blue-50 to-white p-5 flex flex-col gap-2 hover-lift transition-all">
+                                    <div class="flex items-center gap-2"><span class="text-2xl">👥</span>
+                                        <p class="text-xs font-bold text-gray-600">Người dùng</p>
+                                    </div>
+                                    <p class="text-3xl font-bold text-gray-900">1,240</p>
+                                    <p class="text-xs text-blue-600 font-medium">+156 tháng này 🚀</p>
+                                </div>
+                                <div
+                                    class="rounded-2xl border-2 border-amber-100 bg-gradient-to-br from-amber-50 to-white p-5 flex flex-col gap-2 hover-lift transition-all">
+                                    <div class="flex items-center gap-2"><span class="text-2xl">⏳</span>
+                                        <p class="text-xs font-bold text-gray-600">Chờ duyệt</p>
+                                    </div>
+                                    <p class="text-3xl font-bold text-gray-900">7</p>
+                                    <p class="text-xs text-amber-600 font-medium">Cần xử lý ⚠️</p>
+                                </div>
+                            </div><!-- Activity log + Chart -->
+                            <div class="grid lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-4 flex-1 min-h-0">
+                                <div
+                                    class="rounded-2xl border-2 border-green-100 bg-white h-full flex flex-col shadow-md">
+                                    <div
+                                        class="px-5 py-3 border-b-2 border-green-100 flex items-center justify-between text-sm bg-green-50/50">
+                                        <span class="font-bold text-gray-900">📋 Activity Log</span> <span
+                                            class="text-xs text-gray-500">Gần đây</span>
+                                    </div>
+                                    <div class="flex-1 overflow-y-auto scroll-thin p-4 space-y-3 text-xs">
+                                        <div
+                                            class="flex items-start gap-3 p-3 rounded-xl bg-green-50 border border-green-100">
+                                            <span
+                                                class="mt-0.5 h-8 w-8 rounded-xl bg-green-500 text-white flex items-center justify-center text-sm font-bold">
+                                                A </span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-800"><span class="font-bold">Admin</span> duyệt quán
+                                                    <span class="font-bold text-green-700">Chay Tịnh Tâm</span>
+                                                </p>
+                                                <p class="text-gray-500 mt-0.5">⏰ 5 phút trước</p>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="flex items-start gap-3 p-3 rounded-xl bg-blue-50 border border-blue-100">
+                                            <span
+                                                class="mt-0.5 h-8 w-8 rounded-xl bg-blue-500 text-white flex items-center justify-center text-sm font-bold">
+                                                U </span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-800">User <span class="font-bold">linh.vo</span>
+                                                    thêm <span class="font-bold text-blue-700">Organic Store 24/7</span>
+                                                </p>
+                                                <p class="text-gray-500 mt-0.5">⏰ 15 phút trước</p>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="flex items-start gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100">
+                                            <span
+                                                class="mt-0.5 h-8 w-8 rounded-xl bg-gray-500 text-white flex items-center justify-center text-sm font-bold">
+                                                S </span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-800">Hệ thống đồng bộ dữ liệu Google Maps</p>
+                                                <p class="text-gray-500 mt-0.5">⏰ 1 giờ trước</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="rounded-2xl border-2 border-green-100 bg-white h-full p-5 flex flex-col gap-4 shadow-md">
+                                    <div class="flex items-center justify-between text-sm"><span
+                                            class="font-bold text-gray-900">📊 Tuần này</span> <span
+                                            class="text-xs text-gray-500">Lượt truy cập</span>
+                                    </div>
+                                    <div class="flex-1 flex flex-col justify-end"><!-- Bar chart -->
+                                        <div class="flex items-end gap-2 h-32">
+                                            <div
+                                                class="flex-1 flex flex-col items-center gap-1.5 text-[10px] text-gray-500">
+                                                <div class="w-full rounded-t-xl bg-green-200" style="height:45%;"></div>
+                                                <span class="font-medium">T2</span>
+                                            </div>
+                                            <div
+                                                class="flex-1 flex flex-col items-center gap-1.5 text-[10px] text-gray-500">
+                                                <div class="w-full rounded-t-xl bg-green-500" style="height:75%;"></div>
+                                                <span class="font-medium">T3</span>
+                                            </div>
+                                            <div
+                                                class="flex-1 flex flex-col items-center gap-1.5 text-[10px] text-gray-500">
+                                                <div class="w-full rounded-t-xl bg-green-300" style="height:60%;"></div>
+                                                <span class="font-medium">T4</span>
+                                            </div>
+                                            <div
+                                                class="flex-1 flex flex-col items-center gap-1.5 text-[10px] text-gray-500">
+                                                <div class="w-full rounded-t-xl bg-green-600" style="height:85%;"></div>
+                                                <span class="font-medium">T5</span>
+                                            </div>
+                                            <div
+                                                class="flex-1 flex flex-col items-center gap-1.5 text-[10px] text-gray-500">
+                                                <div class="w-full rounded-t-xl bg-green-400" style="height:68%;"></div>
+                                                <span class="font-medium">T6</span>
+                                            </div>
+                                            <div
+                                                class="flex-1 flex flex-col items-center gap-1.5 text-[10px] text-gray-500">
+                                                <div class="w-full rounded-t-xl bg-amber-400" style="height:55%;"></div>
+                                                <span class="font-medium">T7</span>
+                                            </div>
+                                            <div
+                                                class="flex-1 flex flex-col items-center gap-1.5 text-[10px] text-gray-500">
+                                                <div class="w-full rounded-t-xl bg-amber-500" style="height:50%;"></div>
+                                                <span class="font-medium">CN</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section><!-- ANALYTICS PAGE -->
+            <section id="page-analytics" class="page-section hidden space-y-6">
+                <header class="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">📊 Thống kê &amp; Phân tích</h2>
+                        <p class="text-base text-gray-600 mt-1">Biểu đồ phân bố địa điểm chay và heatmap trên bản đồ</p>
+                    </div>
+                </header>
+                <section class="grid lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1.7fr)] gap-5"><!-- Left: Charts -->
+                    <div class="space-y-5"><!-- Bar chart -->
+                        <div class="rounded-2xl bg-white border-2 border-green-100 shadow-md p-5">
+                            <div class="flex items-center justify-between text-sm mb-4"><span
+                                    class="font-bold text-gray-900">📍 Phân bố theo khu vực</span> <span
+                                    class="text-xs text-gray-500">95 địa điểm</span>
+                            </div>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex items-center gap-3"><span class="w-16 font-medium text-gray-700">Quận
+                                        1</span>
+                                    <div class="flex-1 h-3 rounded-full bg-green-100 overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-green-500 to-emerald-600 rounded-full"
+                                            style="width:75%;"></div>
+                                    </div><span class="w-10 text-right font-bold text-gray-900">32</span>
+                                </div>
+                                <div class="flex items-center gap-3"><span class="w-16 font-medium text-gray-700">Quận
+                                        3</span>
+                                    <div class="flex-1 h-3 rounded-full bg-green-100 overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-green-500 to-emerald-600 rounded-full"
+                                            style="width:55%;"></div>
+                                    </div><span class="w-10 text-right font-bold text-gray-900">24</span>
+                                </div>
+                                <div class="flex items-center gap-3"><span class="w-16 font-medium text-gray-700">Quận
+                                        5</span>
+                                    <div class="flex-1 h-3 rounded-full bg-green-100 overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-green-500 to-emerald-600 rounded-full"
+                                            style="width:40%;"></div>
+                                    </div><span class="w-10 text-right font-bold text-gray-900">18</span>
+                                </div>
+                                <div class="flex items-center gap-3"><span class="w-16 font-medium text-gray-700">Quận
+                                        10</span>
+                                    <div class="flex-1 h-3 rounded-full bg-green-100 overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-green-500 to-emerald-600 rounded-full"
+                                            style="width:30%;"></div>
+                                    </div><span class="w-10 text-right font-bold text-gray-900">13</span>
+                                </div>
+                                <div class="flex items-center gap-3"><span
+                                        class="w-16 font-medium text-gray-700">Khác</span>
+                                    <div class="flex-1 h-3 rounded-full bg-gray-100 overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-gray-400 to-gray-500 rounded-full"
+                                            style="width:20%;"></div>
+                                    </div><span class="w-10 text-right font-bold text-gray-900">8</span>
+                                </div>
+                            </div>
+                        </div><!-- Line chart -->
+                        <div class="rounded-2xl bg-white border-2 border-green-100 shadow-md p-5">
+                            <div class="flex items-center justify-between text-sm mb-4"><span
+                                    class="font-bold text-gray-900">📈 Lượt truy cập 7 ngày</span> <span
+                                    class="text-xs text-gray-500">Tổng: 12,450</span>
+                            </div>
+                            <div class="h-36 relative"><!-- Baseline -->
+                                <div class="absolute inset-x-0 top-1/2 border-t border-dashed border-gray-200"></div>
+                                <!-- Bars -->
+                                <div class="absolute inset-0 flex items-end justify-between px-1 gap-1">
+                                    <div class="flex-1 rounded-t-xl bg-gradient-to-t from-green-500 to-green-300"
+                                        style="height:35%;"></div>
+                                    <div class="flex-1 rounded-t-xl bg-gradient-to-t from-green-500 to-green-300"
+                                        style="height:55%;"></div>
+                                    <div class="flex-1 rounded-t-xl bg-gradient-to-t from-green-600 to-green-400"
+                                        style="height:75%;"></div>
+                                    <div class="flex-1 rounded-t-xl bg-gradient-to-t from-green-500 to-green-300"
+                                        style="height:60%;"></div>
+                                    <div class="flex-1 rounded-t-xl bg-gradient-to-t from-emerald-600 to-emerald-400"
+                                        style="height:90%;"></div>
+                                    <div class="flex-1 rounded-t-xl bg-gradient-to-t from-green-500 to-green-300"
+                                        style="height:70%;"></div>
+                                    <div class="flex-1 rounded-t-xl bg-gradient-to-t from-amber-500 to-amber-300"
+                                        style="height:65%;"></div>
+                                </div>
+                                <div
+                                    class="absolute bottom-0 inset-x-0 flex justify-between text-[10px] text-gray-500 px-1 pt-2 font-medium">
+                                    <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- Right: Heatmap -->
+                    <div class="rounded-2xl bg-white border-2 border-green-100 shadow-md p-5 flex flex-col gap-4">
+                        <div class="flex items-center justify-between text-sm"><span class="font-bold text-gray-900">🔥
+                                Heatmap mật độ địa điểm</span> <span
+                                class="px-3 py-1.5 rounded-full bg-green-100 border border-green-200 text-xs text-green-700 font-bold">
+                                Demo layout </span>
+                        </div>
+                        <div
+                            class="flex-1 rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 relative overflow-hidden border-2 border-green-100 min-h-[300px]">
+                            <!-- Heat spots -->
+                            <div class="absolute inset-0">
+                                <div
+                                    class="absolute h-32 w-32 bg-green-500 opacity-40 rounded-full blur-3xl top-12 left-16 animate-pulse">
+                                </div>
+                                <div class="absolute h-40 w-40 bg-emerald-500 opacity-35 rounded-full blur-3xl top-24 right-16"
+                                    style="animation: pulse 3s infinite 0.5s;"></div>
+                                <div class="absolute h-28 w-28 bg-green-600 opacity-40 rounded-full blur-3xl bottom-12 left-1/3"
+                                    style="animation: pulse 3s infinite 1s;"></div>
+                                <div class="absolute h-36 w-36 bg-amber-500 opacity-30 rounded-full blur-3xl bottom-16 right-1/4"
+                                    style="animation: pulse 3s infinite 1.5s;"></div>
+                            </div>
+                            <div
+                                class="absolute top-3 left-3 px-3 py-1.5 rounded-xl bg-white/90 text-xs text-gray-700 shadow-md font-medium border border-green-100">
+                                🗺️ Heatmap Preview
+                            </div><!-- Legend -->
+                            <div
+                                class="absolute bottom-3 right-3 px-4 py-3 rounded-xl bg-white/95 shadow-lg border border-green-100 text-xs space-y-2">
+                                <p class="font-bold text-gray-900">Mật độ:</p>
+                                <div class="flex items-center gap-2">
+                                    <div class="h-3 w-3 rounded-full bg-green-600"></div><span
+                                        class="text-gray-700">Cao</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="h-3 w-3 rounded-full bg-green-400"></div><span
+                                        class="text-gray-700">Trung bình</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="h-3 w-3 rounded-full bg-green-200"></div><span
+                                        class="text-gray-700">Thấp</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section><!-- AUTH PAGE -->
+            <section id="page-auth" class="page-section hidden flex items-center justify-center py-10">
+                <section
+                    class="w-full max-w-md rounded-3xl bg-white border-2 border-green-100 shadow-2xl p-8 space-y-6">
+                    <header class="space-y-2 text-center">
+                        <div
+                            class="inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-green-500 to-emerald-600 text-3xl shadow-lg mx-auto">
+                            🌱
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">Đăng nhập</h2>
+                        <p class="text-sm text-gray-600">Đăng nhập để quản lý địa điểm chay của bạn</p>
+                    </header>
+                    <form class="space-y-4" onsubmit="event.preventDefault();">
+                        <div class="space-y-2 text-sm"><label for="auth-email" class="block text-gray-700 font-bold">📧
+                                Email</label> <input id="auth-email" type="email"
+                                class="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                                placeholder="you@example.com">
+                        </div>
+                        <div class="space-y-2 text-sm"><label for="auth-password"
+                                class="block text-gray-700 font-bold">🔒 Mật khẩu</label> <input id="auth-password"
+                                type="password"
+                                class="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                                placeholder="••••••••">
+                        </div><button id="login-btn"
+                            class="w-full mt-2 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white text-base font-bold hover:from-green-600 hover:to-emerald-700 shadow-lg transition-all">
+                            Đăng nhập </button>
+                        <div class="relative py-3 text-xs text-gray-400">
+                            <div class="absolute inset-x-0 top-1/2 border-t border-gray-200"></div><span
+                                class="relative bg-white px-3 font-medium">Hoặc</span>
+                        </div><button
+                            class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white border-2 border-gray-200 text-sm text-gray-700 font-medium hover:bg-gray-50 transition-all"
+                            type="button"> <span class="text-xl">🔐</span> Đăng nhập với Google </button>
+                    </form>
+                    <p class="text-center text-sm text-gray-600">Chưa có tài khoản? <span
+                            class="text-green-600 font-bold cursor-pointer hover:underline">Đăng ký ngay</span></p>
+                </section>
+            </section>
+        </div>
+    </main>
+    <footer class="w-full border-t-2 border-green-100 bg-gradient-to-b from-white to-green-50/30 mt-10">
+        <div
+            class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row gap-5 md:items-center md:justify-between text-sm text-gray-600">
+            <div class="space-y-2">
+                <p id="footer-text" class="font-bold text-gray-900 text-base">🌱 Vegan Places Finder</p>
+                <p class="text-sm leading-relaxed">Hệ thống tìm kiếm quán ăn chay, cửa hàng nguyên liệu organic và cafe
+                    thuần chay.<br>
+                    Thiết kế hiện đại, tối ưu cho Next.js, Nest.js, Prisma &amp; Google Maps API.</p>
+            </div>
+            <div class="flex flex-wrap gap-4 text-sm font-medium"><a href="#"
+                    class="text-green-600 hover:text-green-700 hover:underline">📞 Liên hệ</a> <a href="#"
+                    class="text-green-600 hover:text-green-700 hover:underline">ℹ️ Giới thiệu</a> <a href="#"
+                    class="text-green-600 hover:text-green-700 hover:underline">📚 Tài liệu API</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // ----- SPA Navigation -----
+        const pages = {
+            home: document.getElementById('page-home'),
+            shops: document.getElementById('page-shops'),
+            'shop-detail': document.getElementById('page-shop-detail'),
+            map: document.getElementById('page-map'),
+            admin: document.getElementById('page-admin'),
+            analytics: document.getElementById('page-analytics'),
+            auth: document.getElementById('page-auth')
+        };
+
+        function showPage(key) {
+            Object.values(pages).forEach(sec => {
+                if (sec) sec.classList.add('hidden');
+            });
+            if (pages[key]) {
+                pages[key].classList.remove('hidden');
+            }
+            // Update nav active state
+            document.querySelectorAll('.nav-link').forEach(btn => {
+                btn.classList.remove('bg-green-50', 'text-green-700', 'font-bold');
+                const target = btn.getAttribute('data-page');
+                if (target === key) {
+                    btn.classList.add('bg-green-50', 'text-green-700', 'font-bold');
+                }
+            });
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.querySelectorAll('[data-page]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const page = e.currentTarget.getAttribute('data-page');
+                if (page && pages[page]) {
+                    showPage(page);
+                } else if (page === 'shop-detail') {
+                    showPage('shop-detail');
+                }
+            });
+        });
+
+        // Avatar dropdown + Auth toggle
+        const avatarBtn = document.getElementById('avatar-btn');
+        const avatarMenu = document.getElementById('avatar-menu');
+        const logoutBtn = document.getElementById('logout-btn');
+        const authGuest = document.getElementById('auth-guest');
+        const authUser = document.getElementById('auth-user');
+        const loginBtn = document.getElementById('login-btn');
+        const adminNav = document.getElementById('admin-nav');
+
+        let loggedIn = false;
+
+        function updateAuthUI() {
+            if (loggedIn) {
+                authGuest.classList.add('hidden');
+                authUser.classList.remove('hidden');
+                authUser.classList.add('flex');
+                adminNav.classList.remove('hidden');
+            } else {
+                authGuest.classList.remove('hidden');
+                authGuest.classList.add('flex');
+                authUser.classList.add('hidden');
+                adminNav.classList.add('hidden');
+                if (avatarMenu) avatarMenu.classList.add('hidden');
+            }
+        }
+
+        if (avatarBtn) {
+            avatarBtn.addEventListener('click', () => {
+                avatarMenu.classList.toggle('hidden');
+            });
+        }
+
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                loggedIn = false;
+                updateAuthUI();
+                showPage('home');
+            });
+        }
+
+        if (loginBtn) {
+            loginBtn.addEventListener('click', () => {
+                loggedIn = true;
+                updateAuthUI();
+                showPage('admin');
+            });
+        }
+
+        // Initialize
+        showPage('home');
+        updateAuthUI();
+
+        // ----- Canva Element SDK -----
+        (function initElementSdk() {
+            if (!window.elementSdk) {
+                return;
+            }
+
+            const defaultConfig = {
+                hero_title: "Khám phá thế giới ẩm thực chay 🌱",
+                hero_subtitle: "Tìm kiếm quán ăn chay, cửa hàng nguyên liệu hữu cơ và cafe thuần chay gần bạn. Với menu chi tiết, đánh giá thực tế và bản đồ trực quan.",
+                hero_cta_text: "🍜 Khám phá quán ăn chay",
+                feature_section_title: "✨ Tính năng nổi bật",
+                footer_text: "🌱 Vegan Places Finder",
+                background_color: "#F0FDF4",
+                surface_color: "#FFFFFF",
+                text_color: "#111827",
+                primary_color: "#22C55E",
+                secondary_color: "#F59E0B",
+                font_family: "Inter",
+                font_size: 14
+            };
+
+            const heroTitleEl = document.getElementById('hero-title');
+            const heroSubtitleEl = document.getElementById('hero-subtitle');
+            const heroCtaEl = document.getElementById('hero-cta-text');
+            const featureSectionTitleEl = document.getElementById('feature-section-title');
+            const footerTextEl = document.getElementById('footer-text');
+            const bodyEl = document.body;
+            const pageContainer = document.getElementById('page-container');
+
+            function applyConfig(config) {
+                const cfg = Object.assign({}, defaultConfig, config || {});
+
+                // Colors
+                bodyEl.style.backgroundColor = cfg.background_color || defaultConfig.background_color;
+                if (pageContainer) {
+                    pageContainer.style.color = cfg.text_color || defaultConfig.text_color;
+                }
+
+                // Text content
+                if (heroTitleEl) heroTitleEl.textContent = cfg.hero_title || defaultConfig.hero_title;
+                if (heroSubtitleEl) heroSubtitleEl.textContent = cfg.hero_subtitle || defaultConfig.hero_subtitle;
+                if (heroCtaEl) heroCtaEl.textContent = cfg.hero_cta_text || defaultConfig.hero_cta_text;
+                if (featureSectionTitleEl) featureSectionTitleEl.textContent = cfg.feature_section_title || defaultConfig.feature_section_title;
+                if (footerTextEl) footerTextEl.textContent = cfg.footer_text || defaultConfig.footer_text;
+
+                // Font family + sizes
+                const baseFont = cfg.font_family || defaultConfig.font_family;
+                const baseSize = Number(cfg.font_size || defaultConfig.font_size);
+                const fontStack = baseFont + ", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+
+                document.querySelectorAll('body, h1, h2, h3, p, button, a, input, select, label, table, th, td').forEach(el => {
+                    el.style.fontFamily = fontStack;
+                });
+
+                if (heroTitleEl) heroTitleEl.style.fontSize = (baseSize * 2.2) + "px";
+                if (heroSubtitleEl) heroSubtitleEl.style.fontSize = (baseSize * 1.1) + "px";
+                document.querySelectorAll('h2').forEach(el => {
+                    el.style.fontSize = (baseSize * 1.6) + "px";
+                });
+                document.querySelectorAll('h3').forEach(el => {
+                    el.style.fontSize = (baseSize * 1.15) + "px";
+                });
+                document.querySelectorAll('p, td, th, label, input, select, button, a').forEach(el => {
+                    if (el.tagName.toLowerCase() === 'p') {
+                        el.style.fontSize = (baseSize * 1.0) + "px";
+                    } else {
+                        el.style.fontSize = (baseSize * 0.95) + "px";
+                    }
+                });
+            }
+
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange: async (config) => {
+                    applyConfig(config);
+                },
+                mapToCapabilities: (config) => {
+                    const cfg = config || defaultConfig;
+                    return {
+                        recolorables: [
+                            {
+                                get: () => cfg.background_color || defaultConfig.background_color,
+                                set: (value) => {
+                                    window.elementSdk.setConfig({ background_color: value });
+                                }
+                            },
+                            {
+                                get: () => cfg.surface_color || defaultConfig.surface_color,
+                                set: (value) => {
+                                    window.elementSdk.setConfig({ surface_color: value });
+                                }
+                            },
+                            {
+                                get: () => cfg.text_color || defaultConfig.text_color,
+                                set: (value) => {
+                                    window.elementSdk.setConfig({ text_color: value });
+                                }
+                            },
+                            {
+                                get: () => cfg.primary_color || defaultConfig.primary_color,
+                                set: (value) => {
+                                    window.elementSdk.setConfig({ primary_color: value });
+                                }
+                            },
+                            {
+                                get: () => cfg.secondary_color || defaultConfig.secondary_color,
+                                set: (value) => {
+                                    window.elementSdk.setConfig({ secondary_color: value });
+                                }
+                            }
+                        ],
+                        borderables: [],
+                        fontEditable: {
+                            get: () => cfg.font_family || defaultConfig.font_family,
+                            set: (value) => {
+                                window.elementSdk.setConfig({ font_family: value });
+                            }
+                        },
+                        fontSizeable: {
+                            get: () => Number(cfg.font_size || defaultConfig.font_size),
+                            set: (value) => {
+                                window.elementSdk.setConfig({ font_size: Number(value) });
+                            }
+                        }
+                    };
+                },
+                mapToEditPanelValues: (config) => {
+                    const cfg = Object.assign({}, defaultConfig, config || {});
+                    return new Map([
+                        ['hero_title', cfg.hero_title],
+                        ['hero_subtitle', cfg.hero_subtitle],
+                        ['hero_cta_text', cfg.hero_cta_text],
+                        ['feature_section_title', cfg.feature_section_title],
+                        ['footer_text', cfg.footer_text]
+                    ]);
+                }
+            });
+
+            applyConfig(window.elementSdk.config || defaultConfig);
+        })();
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9a9190c341c9043d',t:'MTc2NDkxNjk2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
