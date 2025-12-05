@@ -20,16 +20,21 @@
 
         /* Custom scrollbar */
         .scroll-thin::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
 
         .scroll-thin::-webkit-scrollbar-thumb {
-            background-color: rgba(34, 197, 94, 0.3);
-            border-radius: 999px;
+            background-color: rgba(34, 197, 94, 0.5);
+            border-radius: 4px;
         }
 
         .scroll-thin::-webkit-scrollbar-track {
-            background-color: transparent;
+            background-color: rgba(34, 197, 94, 0.1);
+            border-radius: 4px;
+        }
+
+        .scroll-thin::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(34, 197, 94, 0.7);
         }
 
         /* Smooth transitions */
@@ -78,8 +83,8 @@
                         <span class="text-2xl">🌱</span>
                     </div>
                     <div class="flex flex-col leading-tight"><span id="brand-title"
-                            class="text-base font-bold text-gray-900 tracking-tight"> Vegan Places Finder </span> <span
-                            class="text-xs text-green-600 font-medium">Ăn chay - Sống khỏe 🍃</span>
+                            class="text-base font-bold text-gray-900 tracking-tight"> VegMap </span> <span
+                            class="text-xs text-green-600 font-medium">Mầm chay Việt 🍃</span>
                     </div>
                 </div><!-- Nav links -->
                 <div class="hidden md:flex items-center gap-2 text-sm font-medium text-gray-600"><button
@@ -189,38 +194,12 @@
                     <div class="flex-1 w-full max-w-lg">
                         <div
                             class="relative rounded-3xl bg-white border-2 border-green-100 shadow-xl p-5 hover-lift transition-all">
-                            <!-- Fake map -->
-                            <div
-                                class="rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 h-48 md:h-56 relative overflow-hidden">
-                                <!-- Grid -->
-                                <div class="absolute inset-0 opacity-40">
-                                    <div
-                                        class="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#86efac_1px,transparent_0)] bg-[length:24px_24px]">
-                                    </div>
-                                </div><!-- Markers -->
-                                <div class="absolute top-8 left-12 flex flex-col items-center gap-1">
-                                    <div
-                                        class="h-8 w-8 rounded-2xl bg-green-500 shadow-lg flex items-center justify-center text-white text-xs font-bold animate-bounce">
-                                        🍜
-                                    </div><span
-                                        class="text-[10px] font-medium text-gray-700 bg-white px-2 py-0.5 rounded-full shadow-sm">Quán
-                                        chay</span>
-                                </div>
-                                <div class="absolute bottom-12 right-14 flex flex-col items-center gap-1">
-                                    <div class="h-8 w-8 rounded-2xl bg-blue-500 shadow-lg flex items-center justify-center text-white text-xs font-bold"
-                                        style="animation: bounce 1s infinite 0.2s;">
-                                        🛒
-                                    </div><span
-                                        class="text-[10px] font-medium text-gray-700 bg-white px-2 py-0.5 rounded-full shadow-sm">Cửa
-                                        hàng</span>
-                                </div>
-                                <div class="absolute top-1/2 right-8 flex flex-col items-center gap-1">
-                                    <div class="h-8 w-8 rounded-2xl bg-amber-500 shadow-lg flex items-center justify-center text-white text-xs font-bold"
-                                        style="animation: bounce 1s infinite 0.4s;">
-                                        ☕
-                                    </div><span
-                                        class="text-[10px] font-medium text-gray-700 bg-white px-2 py-0.5 rounded-full shadow-sm">Cafe</span>
-                                </div>
+                            <!-- Real Google Map -->
+                            <div class="rounded-2xl overflow-hidden h-48 md:h-56">
+                                <iframe
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.2372088887015!2d106.66294312342318!3d10.796159857440618!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f16b7e7d331%3A0x8e5e0d5b9c8b5a5!2zSMOgIE7hu5kgQuG7p3kgVMOtbmggVMOqbSwgUXXhuq1uIDM!\5e0!3m2!1svi!2s!4v1730825471234"
+                                    width="100%" height="100%" style="border: 0;" allowfullscreen="" loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade"></iframe>
                             </div><!-- List preview -->
                             <div class="mt-4 space-y-2 text-xs">
                                 <div
@@ -400,6 +379,16 @@
                     </form>
                     <div class="flex flex-wrap items-center gap-3 text-sm">
                         <div class="flex items-center gap-2"><label class="text-gray-600 font-medium"
+                                for="items-per-page">Hiển thị:</label> <select id="items-per-page"
+                                class="rounded-xl border-2 border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
+                                onchange="changeItemsPerPage(this.value)">
+                                <option value="5">5 hàng</option>
+                                <option value="10">10 hàng</option>
+                                <option value="15">15 hàng</option>
+                                <option value="20">20 hàng</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2"><label class="text-gray-600 font-medium"
                                 for="filter-type">Loại:</label> <select id="filter-type"
                                 class="rounded-xl border-2 border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-green-500 transition-all">
                                 <option>🌟 Tất cả</option>
@@ -420,189 +409,57 @@
                 </section><!-- Table -->
                 <section class="rounded-2xl bg-white border-2 border-green-100 shadow-md overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="min-w-full text-sm">
+                        <table class="min-w-full text-sm" style="table-layout: fixed; width: 1080px;">
                             <thead
                                 class="bg-gradient-to-r from-green-50 to-emerald-50 border-b-2 border-green-100 text-gray-700 font-bold">
                                 <tr>
-                                    <th scope="col" class="px-5 py-4 text-left">Địa điểm</th>
-                                    <th scope="col" class="px-5 py-4 text-left">Loại hình</th>
-                                    <th scope="col" class="px-5 py-4 text-left">Địa chỉ</th>
-                                    <th scope="col" class="px-5 py-4 text-left">Trạng thái</th>
-                                    <th scope="col" class="px-5 py-4 text-left">Đánh giá</th>
-                                    <th scope="col" class="px-5 py-4 text-left">Khoảng cách</th>
-                                    <th scope="col" class="px-5 py-4 text-right">Thao tác</th>
+                                    <th scope="col" class="px-3 py-3 text-left text-xs font-bold"
+                                        style="min-width: 280px; width: 280px;">Địa điểm</th>
+                                    <th scope="col" class="px-3 py-3 text-left text-xs font-bold"
+                                        style="min-width: 140px; width: 140px;">Loại hình</th>
+                                    <th scope="col" class="px-3 py-3 text-left text-xs font-bold"
+                                        style="min-width: 180px; width: 180px;">Địa chỉ</th>
+                                    <th scope="col" class="px-3 py-3 text-left text-xs font-bold"
+                                        style="min-width: 110px; width: 110px;">Trạng thái</th>
+                                    <th scope="col" class="px-3 py-3 text-left text-xs font-bold"
+                                        style="min-width: 100px; width: 100px;">Đánh giá</th>
+                                    <th scope="col" class="px-3 py-3 text-left text-xs font-bold"
+                                        style="min-width: 80px; width: 80px;">Khoảng cách</th>
+                                    <th scope="col" class="px-3 py-3 text-right text-xs font-bold"
+                                        style="min-width: 150px; width: 150px;">Thao tác</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-green-50 text-gray-700"><!-- Row 1: Restaurant -->
-                                <tr class="hover:bg-green-50/50 transition-all">
-                                    <td class="px-5 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div
-                                                class="h-12 w-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center text-2xl shadow-sm">
-                                                🍜
-                                            </div>
-                                            <div>
-                                                <p class="font-bold text-gray-900">Chay Tịnh Tâm</p>
-                                                <p class="text-xs text-gray-500">ID: #V001</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-5 py-4"><span
-                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-green-100 text-xs font-bold text-green-700 border border-green-200">
-                                            🍜 Quán ăn </span></td>
-                                    <td class="px-5 py-4 text-sm text-gray-600">123 Lê Văn Sỹ, Q.3</td>
-                                    <td class="px-5 py-4"><span
-                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
-                                            <span class="h-2 w-2 rounded-full bg-emerald-500 pulse-green"></span> Đang
-                                            mở </span></td>
-                                    <td class="px-5 py-4">
-                                        <div class="flex items-center gap-1"><span class="text-amber-500">⭐</span> <span
-                                                class="font-bold text-gray-900">4.8</span> <span
-                                                class="text-xs text-gray-500">(124)</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-5 py-4 text-sm text-gray-600">800m</td>
-                                    <td class="px-5 py-4">
-                                        <div class="flex justify-end gap-2"><button data-page="shop-detail"
-                                                class="px-3 py-1.5 rounded-xl border-2 border-green-200 text-xs text-green-700 bg-green-50 font-medium hover:bg-green-100 transition-all">
-                                                👁️ Xem </button> <button
-                                                class="px-3 py-1.5 rounded-xl border border-gray-200 text-xs text-gray-700 bg-white hover:bg-gray-50 transition-all">
-                                                ✏️ Sửa </button>
-                                        </div>
-                                    </td>
-                                </tr><!-- Row 2: Store -->
-                                <tr class="hover:bg-blue-50/50 transition-all">
-                                    <td class="px-5 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div
-                                                class="h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-2xl shadow-sm">
-                                                🛒
-                                            </div>
-                                            <div>
-                                                <p class="font-bold text-gray-900">Organic Store 24/7</p>
-                                                <p class="text-xs text-gray-500">ID: #S005</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-5 py-4"><span
-                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-blue-100 text-xs font-bold text-blue-700 border border-blue-200">
-                                            🛒 Cửa hàng </span></td>
-                                    <td class="px-5 py-4 text-sm text-gray-600">45 Nguyễn Trãi, Q.1</td>
-                                    <td class="px-5 py-4"><span
-                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
-                                            <span class="h-2 w-2 rounded-full bg-emerald-500 pulse-green"></span> Đang
-                                            mở </span></td>
-                                    <td class="px-5 py-4">
-                                        <div class="flex items-center gap-1"><span class="text-amber-500">⭐</span> <span
-                                                class="font-bold text-gray-900">4.9</span> <span
-                                                class="text-xs text-gray-500">(89)</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-5 py-4 text-sm text-gray-600">1.2km</td>
-                                    <td class="px-5 py-4">
-                                        <div class="flex justify-end gap-2"><button data-page="shop-detail"
-                                                class="px-3 py-1.5 rounded-xl border-2 border-blue-200 text-xs text-blue-700 bg-blue-50 font-medium hover:bg-blue-100 transition-all">
-                                                👁️ Xem </button> <button
-                                                class="px-3 py-1.5 rounded-xl border border-gray-200 text-xs text-gray-700 bg-white hover:bg-gray-50 transition-all">
-                                                ✏️ Sửa </button>
-                                        </div>
-                                    </td>
-                                </tr><!-- Row 3: Cafe -->
-                                <tr class="hover:bg-amber-50/50 transition-all">
-                                    <td class="px-5 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div
-                                                class="h-12 w-12 rounded-2xl bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center text-2xl shadow-sm">
-                                                ☕
-                                            </div>
-                                            <div>
-                                                <p class="font-bold text-gray-900">Vegan Cafe &amp; Bakery</p>
-                                                <p class="text-xs text-gray-500">ID: #C012</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-5 py-4"><span
-                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-amber-100 text-xs font-bold text-amber-700 border border-amber-200">
-                                            ☕ Cafe </span></td>
-                                    <td class="px-5 py-4 text-sm text-gray-600">88 Pasteur, Q.1</td>
-                                    <td class="px-5 py-4"><span
-                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-gray-100 text-xs font-bold text-gray-600">
-                                            <span class="h-2 w-2 rounded-full bg-gray-400"></span> Đã đóng </span></td>
-                                    <td class="px-5 py-4">
-                                        <div class="flex items-center gap-1"><span class="text-amber-500">⭐</span> <span
-                                                class="font-bold text-gray-900">4.7</span> <span
-                                                class="text-xs text-gray-500">(56)</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-5 py-4 text-sm text-gray-600">2.1km</td>
-                                    <td class="px-5 py-4">
-                                        <div class="flex justify-end gap-2"><button data-page="shop-detail"
-                                                class="px-3 py-1.5 rounded-xl border-2 border-amber-200 text-xs text-amber-700 bg-amber-50 font-medium hover:bg-amber-100 transition-all">
-                                                👁️ Xem </button> <button
-                                                class="px-3 py-1.5 rounded-xl border border-gray-200 text-xs text-gray-700 bg-white hover:bg-gray-50 transition-all">
-                                                ✏️ Sửa </button>
-                                        </div>
-                                    </td>
-                                </tr><!-- Row 4: Restaurant 2 -->
-                                <tr class="hover:bg-green-50/50 transition-all">
-                                    <td class="px-5 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div
-                                                class="h-12 w-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center text-2xl shadow-sm">
-                                                🍜
-                                            </div>
-                                            <div>
-                                                <p class="font-bold text-gray-900">Bún Chay Hương Sen</p>
-                                                <p class="text-xs text-gray-500">ID: #V018</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-5 py-4"><span
-                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-green-100 text-xs font-bold text-green-700 border border-green-200">
-                                            🍜 Quán ăn </span></td>
-                                    <td class="px-5 py-4 text-sm text-gray-600">234 Võ Văn Tần, Q.3</td>
-                                    <td class="px-5 py-4"><span
-                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
-                                            <span class="h-2 w-2 rounded-full bg-emerald-500 pulse-green"></span> Đang
-                                            mở </span></td>
-                                    <td class="px-5 py-4">
-                                        <div class="flex items-center gap-1"><span class="text-amber-500">⭐</span> <span
-                                                class="font-bold text-gray-900">4.6</span> <span
-                                                class="text-xs text-gray-500">(78)</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-5 py-4 text-sm text-gray-600">1.5km</td>
-                                    <td class="px-5 py-4">
-                                        <div class="flex justify-end gap-2"><button data-page="shop-detail"
-                                                class="px-3 py-1.5 rounded-xl border-2 border-green-200 text-xs text-green-700 bg-green-50 font-medium hover:bg-green-100 transition-all">
-                                                👁️ Xem </button> <button
-                                                class="px-3 py-1.5 rounded-xl border border-gray-200 text-xs text-gray-700 bg-white hover:bg-gray-50 transition-all">
-                                                ✏️ Sửa </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                            <tbody class="divide-y divide-green-50 text-gray-700" id="shops-table-body">
+                                <!-- Rows will be populated by JavaScript -->
                             </tbody>
                         </table>
                     </div><!-- Pagination -->
                     <div
                         class="flex items-center justify-between px-5 py-4 border-t-2 border-green-100 bg-green-50/30 text-sm text-gray-600">
-                        <span class="font-medium">Hiển thị 1-10 trong 95 địa điểm</span>
-                        <div class="flex items-center gap-2"><button
-                                class="px-3 py-1.5 rounded-xl border-2 border-gray-200 bg-white hover:bg-gray-50 font-medium transition-all">
-                                ← Trước </button> <button
-                                class="px-3 py-1.5 rounded-xl border-2 border-green-500 bg-green-500 text-white font-bold">
-                                1 </button> <button
-                                class="px-3 py-1.5 rounded-xl border-2 border-gray-200 bg-white hover:bg-gray-50 font-medium transition-all">
-                                2 </button> <button
-                                class="px-3 py-1.5 rounded-xl border-2 border-gray-200 bg-white hover:bg-gray-50 font-medium transition-all">
-                                3 </button> <button
-                                class="px-3 py-1.5 rounded-xl border-2 border-gray-200 bg-white hover:bg-gray-50 font-medium transition-all">
+                        <span class="font-medium" id="pagination-info">Hiển thị 1-10 trong 24 địa điểm</span>
+                        <div class="flex items-center gap-2" id="pagination-buttons">
+                            <button id="btn-prev"
+                                class="px-3 py-1.5 rounded-xl border-2 border-gray-200 bg-white hover:bg-gray-50 font-medium transition-all"
+                                onclick="previousPage()">
+                                ← Trước </button>
+                            <div id="page-numbers" class="flex items-center gap-2">
+                                <!-- Page buttons will be generated here -->
+                            </div>
+                            <button id="btn-next"
+                                class="px-3 py-1.5 rounded-xl border-2 border-gray-200 bg-white hover:bg-gray-50 font-medium transition-all"
+                                onclick="nextPage()">
                                 Sau → </button>
                         </div>
                     </div>
                 </section>
             </section><!-- SHOP DETAIL PAGE -->
-            <section id="page-shop-detail" class="page-section hidden space-y-6"><!-- Hero -->
+            <section id="page-shop-detail" class="page-section hidden space-y-6"><!-- Back button -->
+                <div class="flex items-center gap-3">
+                    <button onclick="showPage('shops')"
+                        class="px-4 py-2 rounded-xl border-2 border-gray-200 bg-white text-gray-700 font-medium hover:bg-gray-50 transition-all flex items-center gap-2">
+                        ← Quay lại Danh sách
+                    </button>
+                </div><!-- Hero -->
                 <section class="rounded-3xl bg-white border-2 border-green-100 shadow-xl overflow-hidden">
                     <div class="h-48 md:h-64 bg-gradient-to-br from-green-400 via-emerald-500 to-green-600 relative">
                         <div class="absolute inset-0 opacity-20">
@@ -640,7 +497,7 @@
                                     </div>
                                     <div>
                                         <p class="font-bold text-gray-900">📍 Địa chỉ</p>
-                                        <p class="text-gray-600">123 Lê Văn Sỹ, Phường 13, Quận 3, TP. HCM</p>
+                                        <p class="text-gray-600">123 Ngõ 5 Phạm Văn Đồng, Q.Hoàn Kiếm, Hà Nội</p>
                                     </div>
                                 </div>
                                 <div class="flex items-start gap-3">
@@ -681,22 +538,12 @@
                                 </div>
                             </div><!-- Mini map -->
                             <div class="w-full lg:w-80">
-                                <div
-                                    class="rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 h-48 relative overflow-hidden border-2 border-green-100">
-                                    <div
-                                        class="absolute top-2 left-2 px-3 py-1 rounded-full bg-white/90 text-xs text-gray-700 shadow-md font-medium">
-                                        📍 Map preview
-                                    </div>
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        <div
-                                            class="h-16 w-16 rounded-full bg-white/80 shadow-xl flex items-center justify-center">
-                                            <div
-                                                class="h-12 w-12 rounded-2xl bg-green-500 text-white text-xl flex items-center justify-center font-bold">
-                                                🍜
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <iframe
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.850893202405!2d105.83589!3d21.02854!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab9bd9861ca1%3A0xd418704167dd5f42!2sHoan%20Kiem%20District%2C%20Hanoi!5e0!3m2!1sen!2s!4v1234567890"
+                                    width="100%" height="200"
+                                    style="border: 2px solid #dcfce7; border-radius: 1rem; background: white;"
+                                    allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                                </iframe>
                                 <div class="flex flex-wrap gap-2 mt-4 text-sm"><button
                                         class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold hover:from-green-600 hover:to-emerald-700 shadow-md transition-all">
                                         <span>🗺️</span> Chỉ đường Google Maps </button>
@@ -891,8 +738,9 @@
                             cafe ☕ trên bản đồ</p>
                     </div>
                 </header>
-                <section class="rounded-3xl bg-white border-2 border-green-100 shadow-xl overflow-hidden">
-                    <div class="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] h-[500px]"><!-- Sidebar -->
+                <section class="rounded-3xl bg-white border-2 border-green-100 shadow-xl overflow-hidden flex flex-col">
+                    <div class="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] h-[500px] flex-shrink-0">
+                        <!-- Sidebar -->
                         <aside
                             class="border-r-2 border-green-100 h-full flex flex-col bg-gradient-to-b from-green-50/50 to-white">
                             <div class="p-5 border-b-2 border-green-100 space-y-3 bg-white">
@@ -978,80 +826,205 @@
                                     </div><span
                                         class="h-8 w-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold border border-blue-200">
                                         S2 </span>
+                                </div><!-- List item 6 - Restaurant -->
+                                <div
+                                    class="rounded-2xl border-2 border-green-100 bg-white px-4 py-3 flex items-center justify-between hover:border-green-300 hover:shadow-md cursor-pointer transition-all">
+                                    <div class="flex items-center gap-3"><span class="text-2xl">🍜</span>
+                                        <div>
+                                            <p class="font-bold text-gray-900">Cơm Chay Hạnh Phúc</p>
+                                            <p class="text-xs text-gray-500">1.1km • Quán ăn • ⭐ 4.7</p>
+                                        </div>
+                                    </div><span
+                                        class="h-8 w-8 rounded-xl bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold border border-green-200">
+                                        Q3 </span>
+                                </div><!-- List item 7 - Cafe -->
+                                <div
+                                    class="rounded-2xl border-2 border-amber-100 bg-white px-4 py-3 flex items-center justify-between hover:border-amber-300 hover:shadow-md cursor-pointer transition-all">
+                                    <div class="flex items-center gap-3"><span class="text-2xl">☕</span>
+                                        <div>
+                                            <p class="font-bold text-gray-900">Matcha & Me Vegan</p>
+                                            <p class="text-xs text-gray-500">0.9km • Cafe • ⭐ 4.8</p>
+                                        </div>
+                                    </div><span
+                                        class="h-8 w-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-bold border border-amber-200">
+                                        C2 </span>
+                                </div><!-- List item 8 - Restaurant -->
+                                <div
+                                    class="rounded-2xl border-2 border-green-100 bg-white px-4 py-3 flex items-center justify-between hover:border-green-300 hover:shadow-md cursor-pointer transition-all">
+                                    <div class="flex items-center gap-3"><span class="text-2xl">🍜</span>
+                                        <div>
+                                            <p class="font-bold text-gray-900">Phở Chay Thanh Hương</p>
+                                            <p class="text-xs text-gray-500">2.0km • Quán ăn • ⭐ 4.5</p>
+                                        </div>
+                                    </div><span
+                                        class="h-8 w-8 rounded-xl bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold border border-green-200">
+                                        Q4 </span>
+                                </div><!-- List item 9 - Store -->
+                                <div
+                                    class="rounded-2xl border-2 border-blue-100 bg-white px-4 py-3 flex items-center justify-between hover:border-blue-300 hover:shadow-md cursor-pointer transition-all">
+                                    <div class="flex items-center gap-3"><span class="text-2xl">🛒</span>
+                                        <div>
+                                            <p class="font-bold text-gray-900">Siêu Thị Chay Sạch</p>
+                                            <p class="text-xs text-gray-500">1.8km • Cửa hàng • ⭐ 4.6</p>
+                                        </div>
+                                    </div><span
+                                        class="h-8 w-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold border border-blue-200">
+                                        S3 </span>
+                                </div><!-- List item 10 - Cafe -->
+                                <div
+                                    class="rounded-2xl border-2 border-amber-100 bg-white px-4 py-3 flex items-center justify-between hover:border-amber-300 hover:shadow-md cursor-pointer transition-all">
+                                    <div class="flex items-center gap-3"><span class="text-2xl">☕</span>
+                                        <div>
+                                            <p class="font-bold text-gray-900">Cà Phê Xanh Lá</p>
+                                            <p class="text-xs text-gray-500">1.3km • Cafe • ⭐ 4.9</p>
+                                        </div>
+                                    </div><span
+                                        class="h-8 w-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-bold border border-amber-200">
+                                        C3 </span>
                                 </div>
                             </div>
                         </aside><!-- Map area -->
-                        <div class="relative h-full bg-gradient-to-br from-green-50 to-emerald-50">
-                            <!-- Placeholder -->
-                            <div
-                                class="absolute top-3 left-3 px-4 py-2 rounded-2xl bg-white/95 text-xs text-gray-700 shadow-lg font-bold border border-green-100">
-                                🗺️ Google Maps Fullscreen
-                            </div><!-- Legend -->
-                            <div
-                                class="absolute top-3 right-3 px-4 py-3 rounded-2xl bg-white/95 shadow-lg border border-green-100 text-xs space-y-1.5">
-                                <p class="font-bold text-gray-900 mb-2">Chú thích:</p>
-                                <div class="flex items-center gap-2"><span
-                                        class="h-6 w-6 rounded-lg bg-green-500 text-white flex items-center justify-center text-[10px] font-bold">Q</span>
-                                    <span class="text-gray-700">Quán ăn chay</span>
-                                </div>
-                                <div class="flex items-center gap-2"><span
-                                        class="h-6 w-6 rounded-lg bg-blue-500 text-white flex items-center justify-center text-[10px] font-bold">S</span>
-                                    <span class="text-gray-700">Cửa hàng</span>
-                                </div>
-                                <div class="flex items-center gap-2"><span
-                                        class="h-6 w-6 rounded-lg bg-amber-500 text-white flex items-center justify-center text-[10px] font-bold">C</span>
-                                    <span class="text-gray-700">Cafe</span>
-                                </div>
-                            </div><!-- Markers -->
-                            <div class="absolute top-1/4 left-1/4">
-                                <div
-                                    class="h-10 w-10 rounded-2xl bg-green-500 text-white text-sm flex items-center justify-center shadow-xl cursor-pointer hover:scale-110 transition-all font-bold border-2 border-white">
-                                    Q1
-                                </div>
-                            </div>
-                            <div class="absolute top-1/3 right-1/3">
-                                <div
-                                    class="h-10 w-10 rounded-2xl bg-blue-500 text-white text-sm flex items-center justify-center shadow-xl cursor-pointer hover:scale-110 transition-all font-bold border-2 border-white">
-                                    S1
-                                </div>
-                            </div>
-                            <div class="absolute bottom-1/3 right-1/4">
-                                <div
-                                    class="h-10 w-10 rounded-2xl bg-amber-500 text-white text-sm flex items-center justify-center shadow-xl cursor-pointer hover:scale-110 transition-all font-bold border-2 border-white">
-                                    C1
-                                </div>
-                            </div>
-                            <div class="absolute top-1/2 left-1/3">
-                                <div
-                                    class="h-10 w-10 rounded-2xl bg-green-500 text-white text-sm flex items-center justify-center shadow-xl cursor-pointer hover:scale-110 transition-all font-bold border-2 border-white">
-                                    Q2
-                                </div>
-                            </div><!-- Modal detail -->
-                            <div class="absolute bottom-5 left-5 right-5 lg:right-auto lg:w-80">
-                                <div
-                                    class="rounded-2xl bg-white/98 border-2 border-green-200 shadow-2xl p-4 text-sm space-y-3">
-                                    <div class="flex items-start gap-3"><span class="text-3xl">🍜</span>
-                                        <div class="flex-1">
-                                            <div class="flex items-center justify-between gap-2 mb-1">
-                                                <p class="font-bold text-gray-900 text-base">Chay Tịnh Tâm</p><span
-                                                    class="px-2 py-1 rounded-full bg-green-100 text-[10px] text-green-700 font-bold border border-green-200">
-                                                    Đang mở </span>
-                                            </div>
-                                            <p class="text-xs text-gray-600 mb-2">123 Lê Văn Sỹ, Q.3 • 800m</p>
-                                            <div class="flex items-center gap-1 mb-2"><span
-                                                    class="text-amber-500">⭐</span> <span
-                                                    class="font-bold text-gray-900">4.8</span> <span
-                                                    class="text-xs text-gray-500">(124 đánh giá)</span>
-                                            </div>
-                                        </div>
+                        <div class="relative h-full bg-gradient-to-br from-green-50 to-emerald-50 overflow-hidden">
+                            <!-- Real Google Map Embed -->
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.2372088887015!2d106.66294312342318!3d10.796159857440618!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f16b7e7d331%3A0x8e5e0d5b9c8b5a5!2zSMOgIE7hu5kgQuG7p3kgVMOtbmggVMOqbSwgUXXhuq1uIDM!\5e0!3m2!1svi!2s!4v1730825471234"
+                                width="100%" height="100%" style="border: 0;" allowfullscreen="" loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </div>
+                </section>
+                <!-- Open Shops Grid - Separate Section -->
+                <section
+                    class="rounded-3xl bg-white border-2 border-green-100 shadow-xl p-6 space-y-4 overflow-y-auto scroll-thin"
+                    style="max-height: 500px;">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-gray-900 text-lg flex items-center gap-2">✅ Đang mở (7 cửa hàng)</h3>
+                        <span class="text-xs text-green-600 font-medium">Cập nhật: 2 giây trước</span>
+                    </div>
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Shop 1 -->
+                        <div
+                            class="rounded-2xl border-2 border-green-100 bg-gradient-to-br from-green-50 to-white p-4 hover:shadow-md transition-all cursor-pointer">
+                            <div class="flex items-start gap-3">
+                                <span class="text-3xl">🍜</span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-2 mb-1">
+                                        <p class="font-bold text-gray-900">Chay Tịnh Tâm</p>
+                                        <span
+                                            class="px-2 py-1 rounded-full bg-green-100 text-[10px] text-green-700 font-bold border border-green-200 flex-shrink-0">Mở</span>
                                     </div>
-                                    <div class="flex items-center gap-2 pt-2 border-t border-gray-100"><button
-                                            data-page="shop-detail"
-                                            class="flex-1 px-4 py-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-bold hover:from-green-600 hover:to-emerald-700 transition-all">
-                                            👁️ Xem menu </button> <button
-                                            class="px-4 py-2 rounded-xl bg-white border-2 border-green-200 text-sm text-green-700 font-bold hover:bg-green-50 transition-all">
-                                            🗺️ Chỉ đường </button>
+                                    <p class="text-xs text-gray-600 mb-2 truncate">123 Lê Văn Sỹ, Q.3 • 800m</p>
+                                    <div class="flex items-center gap-1"><span class="text-amber-500">⭐</span> <span
+                                            class="font-bold text-gray-900">4.8</span> <span
+                                            class="text-xs text-gray-500">(124)</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Shop 2 -->
+                        <div
+                            class="rounded-2xl border-2 border-green-100 bg-gradient-to-br from-green-50 to-white p-4 hover:shadow-md transition-all cursor-pointer">
+                            <div class="flex items-start gap-3">
+                                <span class="text-3xl">🍜</span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-2 mb-1">
+                                        <p class="font-bold text-gray-900">Bún Chay Hương Sen</p>
+                                        <span
+                                            class="px-2 py-1 rounded-full bg-green-100 text-[10px] text-green-700 font-bold border border-green-200 flex-shrink-0">Mở</span>
                                     </div>
+                                    <p class="text-xs text-gray-600 mb-2 truncate">456 Nguyễn Huệ, Q.1 • 1.5km</p>
+                                    <div class="flex items-center gap-1"><span class="text-amber-500">⭐</span> <span
+                                            class="font-bold text-gray-900">4.6</span> <span
+                                            class="text-xs text-gray-500">(98)</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Shop 3 -->
+                        <div
+                            class="rounded-2xl border-2 border-green-100 bg-gradient-to-br from-green-50 to-white p-4 hover:shadow-md transition-all cursor-pointer">
+                            <div class="flex items-start gap-3">
+                                <span class="text-3xl">🍜</span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-2 mb-1">
+                                        <p class="font-bold text-gray-900">Cơm Chay Hạnh Phúc</p>
+                                        <span
+                                            class="px-2 py-1 rounded-full bg-green-100 text-[10px] text-green-700 font-bold border border-green-200 flex-shrink-0">Mở</span>
+                                    </div>
+                                    <p class="text-xs text-gray-600 mb-2 truncate">789 Quang Trung, Q.1 • 1.1km</p>
+                                    <div class="flex items-center gap-1"><span class="text-amber-500">⭐</span> <span
+                                            class="font-bold text-gray-900">4.7</span> <span
+                                            class="text-xs text-gray-500">(82)</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Shop 4 -->
+                        <div
+                            class="rounded-2xl border-2 border-blue-100 bg-gradient-to-br from-blue-50 to-white p-4 hover:shadow-md transition-all cursor-pointer">
+                            <div class="flex items-start gap-3">
+                                <span class="text-3xl">🛒</span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-2 mb-1">
+                                        <p class="font-bold text-gray-900">Organic Store 24/7</p>
+                                        <span
+                                            class="px-2 py-1 rounded-full bg-blue-100 text-[10px] text-blue-700 font-bold border border-blue-200 flex-shrink-0">24/7</span>
+                                    </div>
+                                    <p class="text-xs text-gray-600 mb-2 truncate">912 Hàng Gà, Q.1 • 1.2km</p>
+                                    <div class="flex items-center gap-1"><span class="text-amber-500">⭐</span> <span
+                                            class="font-bold text-gray-900">4.9</span> <span
+                                            class="text-xs text-gray-500">(156)</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Shop 5 -->
+                        <div
+                            class="rounded-2xl border-2 border-amber-100 bg-gradient-to-br from-amber-50 to-white p-4 hover:shadow-md transition-all cursor-pointer">
+                            <div class="flex items-start gap-3">
+                                <span class="text-3xl">☕</span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-2 mb-1">
+                                        <p class="font-bold text-gray-900">Vegan Cafe & Bakery</p>
+                                        <span
+                                            class="px-2 py-1 rounded-full bg-amber-100 text-[10px] text-amber-700 font-bold border border-amber-200 flex-shrink-0">Mở</span>
+                                    </div>
+                                    <p class="text-xs text-gray-600 mb-2 truncate">321 Bà Triệu, Q.1 • 2.1km</p>
+                                    <div class="flex items-center gap-1"><span class="text-amber-500">⭐</span> <span
+                                            class="font-bold text-gray-900">4.7</span> <span
+                                            class="text-xs text-gray-500">(87)</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Shop 6 -->
+                        <div
+                            class="rounded-2xl border-2 border-amber-100 bg-gradient-to-br from-amber-50 to-white p-4 hover:shadow-md transition-all cursor-pointer">
+                            <div class="flex items-start gap-3">
+                                <span class="text-3xl">☕</span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-2 mb-1">
+                                        <p class="font-bold text-gray-900">Matcha & Me Vegan</p>
+                                        <span
+                                            class="px-2 py-1 rounded-full bg-amber-100 text-[10px] text-amber-700 font-bold border border-amber-200 flex-shrink-0">Mở</span>
+                                    </div>
+                                    <p class="text-xs text-gray-600 mb-2 truncate">147 Trần Hưng Đạo, Q.1 • 0.9km</p>
+                                    <div class="flex items-center gap-1"><span class="text-amber-500">⭐</span> <span
+                                            class="font-bold text-gray-900">4.9</span> <span
+                                            class="text-xs text-gray-500">(112)</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Shop 7 -->
+                        <div
+                            class="rounded-2xl border-2 border-blue-100 bg-gradient-to-br from-blue-50 to-white p-4 hover:shadow-md transition-all cursor-pointer">
+                            <div class="flex items-start gap-3">
+                                <span class="text-3xl">🛒</span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-2 mb-1">
+                                        <p class="font-bold text-gray-900">Chợ Chay Bình Tây</p>
+                                        <span
+                                            class="px-2 py-1 rounded-full bg-blue-100 text-[10px] text-blue-700 font-bold border border-blue-200 flex-shrink-0">Mở</span>
+                                    </div>
+                                    <p class="text-xs text-gray-600 mb-2 truncate">654 Đinh Tiên Hoàng, Q.3 • 3.2km</p>
+                                    <div class="flex items-center gap-1"><span class="text-amber-500">⭐</span> <span
+                                            class="font-bold text-gray-900">4.5</span> <span
+                                            class="text-xs text-gray-500">(64)</span></div>
                                 </div>
                             </div>
                         </div>
@@ -1229,43 +1202,56 @@
                                     class="text-xs text-gray-500">95 địa điểm</span>
                             </div>
                             <div class="space-y-3 text-sm">
-                                <div class="flex items-center gap-3"><span class="w-16 font-medium text-gray-700">Quận
-                                        1</span>
+
+                                <div class="flex items-center gap-3">
+                                    <span class="w-28 font-medium text-gray-700">Hoàn Kiếm</span>
                                     <div class="flex-1 h-3 rounded-full bg-green-100 overflow-hidden">
                                         <div class="h-full bg-gradient-to-r from-green-500 to-emerald-600 rounded-full"
-                                            style="width:75%;"></div>
-                                    </div><span class="w-10 text-right font-bold text-gray-900">32</span>
+                                            style="width:60%;"></div>
+                                    </div>
+                                    <span class="w-10 text-right font-bold text-gray-900">22</span>
                                 </div>
-                                <div class="flex items-center gap-3"><span class="w-16 font-medium text-gray-700">Quận
-                                        3</span>
+
+                                <div class="flex items-center gap-3">
+                                    <span class="w-28 font-medium text-gray-700">Ba Đình</span>
                                     <div class="flex-1 h-3 rounded-full bg-green-100 overflow-hidden">
                                         <div class="h-full bg-gradient-to-r from-green-500 to-emerald-600 rounded-full"
                                             style="width:55%;"></div>
-                                    </div><span class="w-10 text-right font-bold text-gray-900">24</span>
+                                    </div>
+                                    <span class="w-10 text-right font-bold text-gray-900">18</span>
                                 </div>
-                                <div class="flex items-center gap-3"><span class="w-16 font-medium text-gray-700">Quận
-                                        5</span>
+
+                                <div class="flex items-center gap-3">
+                                    <span class="w-28 font-medium text-gray-700">Đống Đa</span>
                                     <div class="flex-1 h-3 rounded-full bg-green-100 overflow-hidden">
                                         <div class="h-full bg-gradient-to-r from-green-500 to-emerald-600 rounded-full"
-                                            style="width:40%;"></div>
-                                    </div><span class="w-10 text-right font-bold text-gray-900">18</span>
+                                            style="width:50%;"></div>
+                                    </div>
+                                    <span class="w-10 text-right font-bold text-gray-900">16</span>
                                 </div>
-                                <div class="flex items-center gap-3"><span class="w-16 font-medium text-gray-700">Quận
-                                        10</span>
+
+                                <div class="flex items-center gap-3">
+                                    <span class="w-28 font-medium text-gray-700">Cầu Giấy</span>
                                     <div class="flex-1 h-3 rounded-full bg-green-100 overflow-hidden">
                                         <div class="h-full bg-gradient-to-r from-green-500 to-emerald-600 rounded-full"
-                                            style="width:30%;"></div>
-                                    </div><span class="w-10 text-right font-bold text-gray-900">13</span>
+                                            style="width:45%;"></div>
+                                    </div>
+                                    <span class="w-10 text-right font-bold text-gray-900">14</span>
                                 </div>
-                                <div class="flex items-center gap-3"><span
-                                        class="w-16 font-medium text-gray-700">Khác</span>
-                                    <div class="flex-1 h-3 rounded-full bg-gray-100 overflow-hidden">
-                                        <div class="h-full bg-gradient-to-r from-gray-400 to-gray-500 rounded-full"
-                                            style="width:20%;"></div>
-                                    </div><span class="w-10 text-right font-bold text-gray-900">8</span>
+
+                                <div class="flex items-center gap-3">
+                                    <span class="w-28 font-medium text-gray-700">Hai Bà Trưng</span>
+                                    <div class="flex-1 h-3 rounded-full bg-green-100 overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-green-500 to-emerald-600 rounded-full"
+                                            style="width:38%;"></div>
+                                    </div>
+                                    <span class="w-10 text-right font-bold text-gray-900">12</span>
                                 </div>
+
                             </div>
-                        </div><!-- Line chart -->
+
+                        </div>
+                        <!-- Line chart -->
                         <div class="rounded-2xl bg-white border-2 border-green-100 shadow-md p-5">
                             <div class="flex items-center justify-between text-sm mb-4"><span
                                     class="font-bold text-gray-900">📈 Lượt truy cập 7 ngày</span> <span
@@ -1297,48 +1283,19 @@
                             </div>
                         </div>
                     </div><!-- Right: Heatmap -->
-                    <div class="rounded-2xl bg-white border-2 border-green-100 shadow-md p-5 flex flex-col gap-4">
-                        <div class="flex items-center justify-between text-sm"><span class="font-bold text-gray-900">🔥
-                                Heatmap mật độ địa điểm</span> <span
-                                class="px-3 py-1.5 rounded-full bg-green-100 border border-green-200 text-xs text-green-700 font-bold">
-                                Demo layout </span>
+                    <div class="rounded-2xl bg-white border-2 border-green-100 shadow-md p-5 h-full flex flex-col">
+                        <div class="flex items-center justify-between text-sm mb-4">
+                            <span class="font-bold text-gray-900">🗺️ Xem theo khu vực</span>
                         </div>
-                        <div
-                            class="flex-1 rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 relative overflow-hidden border-2 border-green-100 min-h-[300px]">
-                            <!-- Heat spots -->
-                            <div class="absolute inset-0">
-                                <div
-                                    class="absolute h-32 w-32 bg-green-500 opacity-40 rounded-full blur-3xl top-12 left-16 animate-pulse">
-                                </div>
-                                <div class="absolute h-40 w-40 bg-emerald-500 opacity-35 rounded-full blur-3xl top-24 right-16"
-                                    style="animation: pulse 3s infinite 0.5s;"></div>
-                                <div class="absolute h-28 w-28 bg-green-600 opacity-40 rounded-full blur-3xl bottom-12 left-1/3"
-                                    style="animation: pulse 3s infinite 1s;"></div>
-                                <div class="absolute h-36 w-36 bg-amber-500 opacity-30 rounded-full blur-3xl bottom-16 right-1/4"
-                                    style="animation: pulse 3s infinite 1.5s;"></div>
-                            </div>
-                            <div
-                                class="absolute top-3 left-3 px-3 py-1.5 rounded-xl bg-white/90 text-xs text-gray-700 shadow-md font-medium border border-green-100">
-                                🗺️ Heatmap Preview
-                            </div><!-- Legend -->
-                            <div
-                                class="absolute bottom-3 right-3 px-4 py-3 rounded-xl bg-white/95 shadow-lg border border-green-100 text-xs space-y-2">
-                                <p class="font-bold text-gray-900">Mật độ:</p>
-                                <div class="flex items-center gap-2">
-                                    <div class="h-3 w-3 rounded-full bg-green-600"></div><span
-                                        class="text-gray-700">Cao</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <div class="h-3 w-3 rounded-full bg-green-400"></div><span
-                                        class="text-gray-700">Trung bình</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <div class="h-3 w-3 rounded-full bg-green-200"></div><span
-                                        class="text-gray-700">Thấp</span>
-                                </div>
-                            </div>
+                        <div class="rounded-2xl overflow-hidden flex-1 ">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.68707420569!2d105.83929137510454!3d21.00538628852009!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135abbc66fb1cf5%3A0x4df6e4d8fe57f5c1!2zSOG6o2kgU8OgaSBBbiBI4bqhaSBI4bqjaSBIw6AgTuG7mWkgVG_DoGkgSMOgIE7hu7Fh!5e0!3m2!1svi!2s!4v1730825479999"
+                                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
                     </div>
+
+
                 </section>
             </section><!-- AUTH PAGE -->
             <section id="page-auth" class="page-section hidden flex items-center justify-center py-10">
@@ -1485,9 +1442,237 @@
             });
         }
 
+        // ===== SHOPS DATA & PAGINATION =====
+        const shopsData = [
+            { emoji: '🍜', name: 'Chay Tịnh Tâm', type: 'Quán ăn chay', address: '123 Ngõ 5 Phạm Văn Đồng, Q.Hoàn Kiếm', status: 'open', rating: 4.8, reviews: 124, distance: '800m', id: '#V001', menu: [{ name: 'Cơm tấm chay đặc biệt', price: '45k', desc: 'Cơm tấm, sườn chay nướng, chả chay, bì chay, trứng ốp la', tag: '🔥 Phổ biến' }, { name: 'Bún chay nước mắm', price: '40k', desc: 'Bún tươi, nước mắm chay đậm đà, rau thơm tươi', tag: '✨ Mới' }, { name: 'Canh chua chay', price: '25k', desc: 'Canh chua cay, tofu, dưa chuột, cà chua tươi', tag: '' }] },
+            { emoji: '🍜', name: 'Bún Chay Hương Sen', type: 'Quán ăn chay', address: '234 Phó Đức Chính, Q.Ba Đình', status: 'open', rating: 4.6, reviews: 78, distance: '1.5km', id: '#V002', menu: [{ name: 'Bún riêu chay', price: '45k', desc: 'Nước riêu tôm chay chua cay, bún tươi, rau sống', tag: '' }, { name: 'Bún đậu phụ', price: '40k', desc: 'Bún, đậu hũ ốp, tương cà chua, rau bóp', tag: '✨ Mới' }, { name: 'Bún cua chay', price: '50k', desc: 'Cua chay vàng, bún tươi, nước dùng đặc biệt', tag: '🔥 Phổ biến' }] },
+            { emoji: '🍜', name: 'Cơm Chay Hạnh Phúc', type: 'Quán ăn chay', address: '789 Lý Thái Tổ, Q.Đống Đa', status: 'open', rating: 4.7, reviews: 82, distance: '1.1km', id: '#V003', menu: [{ name: 'Cơm tấm chay', price: '38k', desc: 'Cơm tấm thơm, sườn chay, bì chay, trứng', tag: '' }, { name: 'Cơm chiên chay', price: '42k', desc: 'Cơm chiên với rau, hạt điều, nước tương chay', tag: '' }, { name: 'Cơm rau thập cẩm', price: '45k', desc: 'Cơm trắng, rau xanh tươi, nước sốt chua cay', tag: '' }] },
+            { emoji: '🍜', name: 'Phở Chay Bà Tuyền', type: 'Quán ăn chay', address: '456 Hoàng Hoa Thám, Q.Ba Đình', status: 'closed', rating: 4.5, reviews: 65, distance: '1.8km', id: '#V004', menu: [{ name: 'Phở rau nấm', price: '50k', desc: 'Nấm hương, nấm mèo, nước dùng đức từ xương chay', tag: '' }, { name: 'Phở đậu hũ', price: '48k', desc: 'Phở trắng, đậu hũ tơi, nước dùng thơm', tag: '' }, { name: 'Phở rau cải xanh', price: '52k', desc: 'Phở nóng hổi, rau cải xanh tươi, cà chua', tag: '' }] },
+            { emoji: '🍜', name: 'Bánh Mì Chay Sài Gòn', type: 'Quán ăn chay', address: '567 Ngô Quyền, Q.Hai Bà Trưng', status: 'open', rating: 4.4, reviews: 52, distance: '0.6km', id: '#V005', menu: [{ name: 'Bánh mì chay đầy đủ', price: '30k', desc: 'Bánh mì nóng giòn, pâté chay, rau sống, nước mắm', tag: '🔥 Phổ biến' }, { name: 'Bánh mì pâté chay', price: '35k', desc: 'Bánh mì giòn, pâté đậu phộu, bơ chay', tag: '' }, { name: 'Bánh mì ốp la chay', price: '32k', desc: 'Bánh mì, trứng ốp la chay, hành tây', tag: '' }] },
+            { emoji: '🛒', name: 'Organic Store 24/7', type: 'Cửa hàng nguyên liệu', address: '45 Chủ Bộc, Q.Đống Đa', status: 'open', rating: 4.9, reviews: 89, distance: '1.2km', id: '#S001', menu: [] },
+            { emoji: '🛒', name: 'Chợ Chay Bình Tây', type: 'Cửa hàng nguyên liệu', address: '654 Quang Trung, Q.Hoàn Kiếm', status: 'open', rating: 4.5, reviews: 64, distance: '3.2km', id: '#S002', menu: [] },
+            { emoji: '🛒', name: 'Farm Fresh Vegan', type: 'Cửa hàng nguyên liệu', address: '789 Hàng Gà, Q.Hoàn Kiếm', status: 'open', rating: 4.8, reviews: 91, distance: '0.9km', id: '#S003', menu: [] },
+            { emoji: '🛒', name: 'Thảo Mộc Organic Shop', type: 'Cửa hàng nguyên liệu', address: '321 Bà Triệu, Q.Đống Đa', status: 'open', rating: 4.6, reviews: 73, distance: '2.3km', id: '#S004', menu: [] },
+            { emoji: '☕', name: 'Vegan Cafe & Bakery', type: 'Cafe & Dessert', address: '88 Pasteur, Q.Hoàn Kiếm', status: 'closed', rating: 4.7, reviews: 56, distance: '2.1km', id: '#C001', menu: [{ name: 'Cà phê đậu nành', price: '25k', desc: 'Cà phê pha phin, sữa đậu nành tươi, đường cane', tag: '' }, { name: 'Bánh muffin chay', price: '30k', desc: 'Bánh muffin chocolate, không trứng, vị ngon lành', tag: '' }, { name: 'Sinh tố rau xanh', price: '35k', desc: 'Rau xanh tươi, dâu dũa, chuối, sữa hạt', tag: '' }] },
+            { emoji: '☕', name: 'Matcha & Me Vegan', type: 'Cafe & Dessert', address: '147 Trần Hưng Đạo, Q.Hoàn Kiếm', status: 'open', rating: 4.9, reviews: 112, distance: '0.9km', id: '#C002', menu: [{ name: 'Trà Matcha latte', price: '45k', desc: 'Matcha thơm, sữa đậu nành, toppings mochi', tag: '💚 Healthy' }, { name: 'Bánh donut chay', price: '28k', desc: 'Bánh donut phủ keo, nhân kem vani chay', tag: '✨ Mới' }, { name: 'Sinh tố dâu tây', price: '40k', desc: 'Dâu tây tươi, sữa cà phê, đá mềm', tag: '' }] },
+            { emoji: '☕', name: 'Cà Phê Thiền', type: 'Cafe & Dessert', address: '234 Trần Phú, Q.Ba Đình', status: 'open', rating: 4.5, reviews: 68, distance: '1.3km', id: '#C003', menu: [{ name: 'Cà phê đen', price: '20k', desc: 'Cà phê phin thơm, nước nóng, không đường', tag: '' }, { name: 'Bánh croissant chay', price: '32k', desc: 'Bánh croissant giòn, bơ chay, vani', tag: '' }, { name: 'Trà ginger chay', price: '30k', desc: 'Trà ginger tươi, mật ong, chanh tươi', tag: '' }] },
+            { emoji: '🤝', name: 'Cộng Đồng Chay Hà Nội', type: 'Cộng đồng chia sẻ', address: '111 Lý Thái Tổ, Q.Hoàn Kiếm', status: 'open', rating: 4.8, reviews: 45, distance: '0.7km', id: '#C004', menu: [] },
+            { emoji: '🤝', name: 'Mạng Lưới Người Chay', type: 'Cộng đồng chia sẻ', address: '222 Tràng Tiền, Q.Hoàn Kiếm', status: 'open', rating: 4.6, reviews: 38, distance: '1.4km', id: '#C005', menu: [] },
+            { emoji: '🎉', name: 'Lễ Hội Thực Phẩm Chay', type: 'Sự kiện', address: 'Công viên Tao Đàn, Q.Hoàn Kiếm', status: 'upcoming', rating: 5.0, reviews: 123, distance: '2km', id: '#E001', menu: [] },
+            { emoji: '🎉', name: 'Hội Chợ Chay Xuân', type: 'Sự kiện', address: 'Hồ Gương, Q.Hoàn Kiếm', status: 'upcoming', rating: 4.9, reviews: 87, distance: '1.5km', id: '#E002', menu: [] },
+            { emoji: '🍜', name: 'Cơm Niêu Chay An Khang', type: 'Quán ăn chay', address: '678 Chiến Thắng, Q.Ba Đình', status: 'open', rating: 4.7, reviews: 55, distance: '2.5km', id: '#V006', menu: [{ name: 'Cơm niêu chay', price: '55k', desc: 'Cơm nấu niêu, mồng tơi, nước dùng thơm', tag: '🔥 Phổ biến' }, { name: 'Canh chua chay', price: '25k', desc: 'Canh chua cay, tofu, rau tươi, cà chua', tag: '' }, { name: 'Cuốn chay', price: '35k', desc: 'Bánh trắng, rau sống, sốt mè rang', tag: '' }] },
+            { emoji: '🍜', name: 'Mì Quảng Chay Thanh Hương', type: 'Quán ăn chay', address: '890 Giảng Võ, Q.Hai Bà Trưng', status: 'open', rating: 4.4, reviews: 41, distance: '3.1km', id: '#V007', menu: [{ name: 'Mì Quảng chay', price: '48k', desc: 'Mì Quảng, rau xanh tươi, nước dùng đặc biệt', tag: '' }, { name: 'Mì vàng xào', price: '45k', desc: 'Mì vàng giòn, rau, hành hoa, sốt cà chua', tag: '' }, { name: 'Bánh trắng nướng chay', price: '20k', desc: 'Bánh trắng tươi, sốt mè, rau sống', tag: '' }] },
+            { emoji: '🛒', name: 'Nông Sản Sạch Đà Lạt', type: 'Cửa hàng nguyên liệu', address: '234 Tây Sơn, Q.Đống Đa', status: 'open', rating: 4.7, reviews: 79, distance: '1.7km', id: '#S005', menu: [] },
+            { emoji: '☕', name: 'Cà Phê Sữa Đậu Nành', type: 'Cafe & Dessert', address: '456 Bà Triệu, Q.Đống Đa', status: 'open', rating: 4.6, reviews: 58, distance: '0.8km', id: '#C006', menu: [{ name: 'Cà phê sữa đậu nành', price: '28k', desc: 'Cà phê phin, sữa đậu nành thơm ngon', tag: '' }, { name: 'Bánh flan chay', price: '25k', desc: 'Bánh flan trứng chay, kem caramel', tag: '' }, { name: 'Caramel chay', price: '35k', desc: 'Sốt caramel chay, sữa hạt, nước đá', tag: '' }] },
+            { emoji: '🤝', name: 'Nhóm Ăn Chay Lan Anh', type: 'Cộng đồng chia sẻ', address: '567 Hàng Bộc, Q.Hoàn Kiếm', status: 'open', rating: 4.5, reviews: 32, distance: '0.5km', id: '#C007', menu: [] },
+            { emoji: '🎉', name: 'Workshop Nấu Ăn Chay', type: 'Sự kiện', address: 'Tầng 3 - 145 Trần Hưng Đạo, Q.Hoàn Kiếm', status: 'upcoming', rating: 4.8, reviews: 56, distance: '2.1km', id: '#E003', menu: [] },
+            { emoji: '🍜', name: 'Nước Sốt & Mì Chay Tuyệt Vời', type: 'Quán ăn chay', address: '999 Trần Duy Hưng, Q.Thanh Xuân', status: 'closed', rating: 4.3, reviews: 34, distance: '1.9km', id: '#V008', menu: [{ name: 'Mì xào chay', price: '42k', desc: 'Mì tươi xào, rau, hành hoa, sốt cà chua', tag: '' }, { name: 'Nước sốt cà chua', price: '15k', desc: 'Nước sốt cà chua homemade, không MSG', tag: '' }, { name: 'Canh rau chay', price: '28k', desc: 'Canh nấu từ rau tươi, nước dùng thanh', tag: '' }] },
+            { emoji: '🛒', name: 'Rau Xanh Tươi Hôm Nay', type: 'Cửa hàng nguyên liệu', address: '111 Vương Thừa Vũ, Q.Thanh Xuân', status: 'open', rating: 4.8, reviews: 94, distance: '0.4km', id: '#S006', menu: [] }
+        ];
+
+        let currentPage = 1;
+        let itemsPerPage = 5;
+
+        function changeItemsPerPage(value) {
+            itemsPerPage = parseInt(value);
+            currentPage = 1;
+            renderTable();
+        }
+
+        function renderTable() {
+            const startIdx = (currentPage - 1) * itemsPerPage;
+            const endIdx = startIdx + itemsPerPage;
+            const pageData = shopsData.slice(startIdx, endIdx);
+
+            const tableBody = document.getElementById('shops-table-body');
+            tableBody.innerHTML = pageData.map((shop, idx) => `
+                <tr class="hover:bg-${getColorClass(shop.type)}-50/50 transition-all cursor-pointer" onclick="viewShopDetail(${startIdx + idx})">
+                    <td class="px-3 py-3 text-sm" style="min-width: 280px; width: 280px;">
+                        <div class="flex items-center gap-3 flex-nowrap">
+                            <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-${getColorClass(shop.type)}-100 to-${getColorClass(shop.type)}-200 flex items-center justify-center text-2xl shadow-sm flex-shrink-0">
+                                ${shop.emoji}
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="font-bold text-gray-900 truncate">${shop.name}</p>
+                                <p class="text-xs text-gray-500 truncate">ID: ${shop.id}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-3 py-3 text-sm" style="min-width: 140px; width: 140px;"><span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-${getColorClass(shop.type)}-100 text-xs font-bold text-${getColorClass(shop.type)}-700 border border-${getColorClass(shop.type)}-200 whitespace-nowrap">
+                        ${shop.emoji} <span class="truncate">${shop.type}</span>
+                    </span></td>
+                    <td class="px-3 py-3 text-sm text-gray-600" style="min-width: 180px; width: 180px;">
+                        <div class="truncate">${shop.address}</div>
+                    </td>
+                    <td class="px-3 py-3 text-sm" style="min-width: 110px; width: 110px;"><span class="inline-flex items-center gap-1 px-2 py-1 rounded-full ${shop.status === 'open' ? 'bg-emerald-100 text-emerald-700' :
+                    shop.status === 'closed' ? 'bg-gray-100 text-gray-600' :
+                        'bg-blue-100 text-blue-700'
+                } text-xs font-bold whitespace-nowrap">
+                        <span class="h-2 w-2 rounded-full ${shop.status === 'open' ? 'bg-emerald-500 pulse-green' :
+                    shop.status === 'closed' ? 'bg-gray-400' :
+                        'bg-blue-500'
+                }"></span> ${shop.status === 'open' ? 'Đang mở' :
+                    shop.status === 'closed' ? 'Đã đóng' :
+                        'Sắp tới'
+                }
+                    </span></td>
+                    <td class="px-3 py-3 text-sm" style="min-width: 100px; width: 100px;">
+                        <div class="flex items-center gap-1 whitespace-nowrap"><span class="text-amber-500">⭐</span> <span class="font-bold text-gray-900">${shop.rating}</span> <span class="text-xs text-gray-500">(${shop.reviews})</span></div>
+                    </td>
+                    <td class="px-3 py-3 text-sm text-gray-600" style="min-width: 80px; width: 80px;">
+                        <div class="whitespace-nowrap">${shop.distance}</div>
+                    </td>
+                    <td class="px-3 py-3 text-sm" style="min-width: 150px; width: 150px;">
+                        <div class="flex justify-end gap-1 flex-nowrap"><button onclick="viewShopDetail(${startIdx + idx}); event.stopPropagation();" class="px-2 py-1.5 rounded-lg border-2 border-${getColorClass(shop.type)}-200 text-xs text-${getColorClass(shop.type)}-700 bg-${getColorClass(shop.type)}-50 font-medium hover:bg-${getColorClass(shop.type)}-100 transition-all flex-shrink-0">
+                            👁️ Xem
+                        </button> <button onclick="event.stopPropagation();" class="px-2 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-700 bg-white hover:bg-gray-50 transition-all flex-shrink-0">
+                            ✏️ Sửa
+                        </button></div>
+                    </td>
+                </tr>
+            `).join('');
+
+            updatePagination();
+        }
+
+        function getColorClass(type) {
+            if (type.includes('Quán ăn')) return 'green';
+            if (type.includes('Cửa hàng')) return 'blue';
+            if (type.includes('Cafe')) return 'amber';
+            if (type.includes('Cộng đồng')) return 'purple';
+            if (type.includes('Sự kiện')) return 'pink';
+            return 'green';
+        }
+
+        function viewShopDetail(shopIndex) {
+            const shop = shopsData[shopIndex];
+
+            // Update hero section
+            const heroEmoji = document.querySelector('#page-shop-detail .text-4xl');
+            const heroTitle = document.querySelector('#page-shop-detail h1');
+            const heroDescParagraphs = document.querySelectorAll('#page-shop-detail .absolute.bottom-5 p');
+            const heroDesc = heroDescParagraphs.length > 0 ? heroDescParagraphs[0] : null;
+            const statusBadge = document.querySelector('#page-shop-detail .px-4.py-2.rounded-2xl.bg-white.bg-opacity-20');
+
+            if (heroEmoji) heroEmoji.textContent = shop.emoji;
+            if (heroTitle) heroTitle.textContent = shop.name;
+            if (heroDesc) heroDesc.textContent = `${shop.type} • ${shop.address}`;
+
+            // Update status
+            if (statusBadge) {
+                const statusText = shop.status === 'open' ? 'Đang mở cửa' : shop.status === 'closed' ? 'Đã đóng cửa' : 'Sắp khai trương';
+                const statusColor = shop.status === 'open' ? 'emerald' : shop.status === 'closed' ? 'gray' : 'blue';
+                statusBadge.innerHTML = `<span class="h-2.5 w-2.5 rounded-full bg-${statusColor}-400 pulse-green"></span> <span class="font-bold">${statusText}</span>`;
+            }
+
+            // Update address
+            const addressElements = document.querySelectorAll('#page-shop-detail .flex.items-start.gap-3');
+            if (addressElements.length > 0) {
+                const addressDiv = addressElements[0];
+                const addressP = addressDiv.querySelectorAll('p')[1];
+                if (addressP) addressP.textContent = shop.address;
+            }
+
+            // Update rating badge
+            const ratingElements = document.querySelectorAll('#page-shop-detail .flex.flex-wrap.gap-2.pt-2');
+            if (ratingElements.length > 0) {
+                const ratingSpans = ratingElements[0].querySelectorAll('span');
+                for (let span of ratingSpans) {
+                    if (span.textContent.includes('⭐')) {
+                        span.textContent = `⭐ ${shop.rating} (${shop.reviews} đánh giá)`;
+                        break;
+                    }
+                }
+            }
+
+            // Update menu section
+            const menuGrid = document.querySelector('#page-shop-detail .grid');
+            if (menuGrid && shop.menu && shop.menu.length > 0) {
+                menuGrid.innerHTML = shop.menu.map((m, idx) => {
+                    let tagColor = '';
+                    if (m.tag && m.tag.includes('🔥')) tagColor = 'bg-red-500';
+                    else if (m.tag && m.tag.includes('✨')) tagColor = 'bg-green-500';
+                    else if (m.tag && m.tag.includes('💚')) tagColor = 'bg-emerald-500';
+
+                    return `
+                    <article class="rounded-2xl bg-white border-2 border-green-100 shadow-md overflow-hidden hover-lift transition-all">
+                        <div class="h-40 bg-gradient-to-br from-green-200 via-emerald-300 to-green-400 relative flex items-center justify-center text-6xl">
+                            🍽️
+                            ${m.tag ? `<div class="absolute top-2 right-2 px-3 py-1 rounded-full ${tagColor} text-white text-xs font-bold shadow-md">${m.tag}</div>` : ''}
+                        </div>
+                        <div class="p-4 space-y-3">
+                            <div class="flex items-start justify-between gap-2">
+                                <h3 class="text-base font-bold text-gray-900">${m.name}</h3>
+                                <span class="text-lg font-bold text-green-600">${m.price}</span>
+                            </div>
+                            <p class="text-sm text-gray-600 leading-relaxed">${m.desc || 'Hương vị tuyệt vời, ăn là yêu'}</p>
+                            <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+                                <div></div>
+                                <button class="px-4 py-1.5 rounded-xl bg-green-500 text-white text-sm font-bold hover:bg-green-600 transition-all">
+                                    + Thêm
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                `}).join('');
+            } else if (menuGrid) {
+                menuGrid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-8">Không có menu</p>';
+            }
+
+            showPage('shop-detail');
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(shopsData.length / itemsPerPage);
+            const paginationInfo = document.getElementById('pagination-info');
+            const startItem = (currentPage - 1) * itemsPerPage + 1;
+            const endItem = Math.min(currentPage * itemsPerPage, shopsData.length);
+            paginationInfo.textContent = `Hiển thị ${startItem}-${endItem} trong ${shopsData.length} địa điểm`;
+
+            const pageNumbers = document.getElementById('page-numbers');
+            pageNumbers.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.className = `px-3 py-1.5 rounded-xl font-medium transition-all ${i === currentPage
+                    ? 'border-2 border-green-500 bg-green-500 text-white font-bold'
+                    : 'border-2 border-gray-200 bg-white hover:bg-gray-50'
+                    }`;
+                btn.onclick = () => goToPage(i);
+                pageNumbers.appendChild(btn);
+            }
+
+            document.getElementById('btn-prev').disabled = currentPage === 1;
+            document.getElementById('btn-next').disabled = currentPage === totalPages;
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.ceil(shopsData.length / itemsPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderTable();
+                document.querySelector('#page-shops').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(shopsData.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                goToPage(currentPage + 1);
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 1) {
+                goToPage(currentPage - 1);
+            }
+        }
+
         // Initialize
         showPage('home');
         updateAuthUI();
+        renderTable();
 
         // ----- Canva Element SDK -----
         (function initElementSdk() {
