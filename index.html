@@ -1571,6 +1571,7 @@
                 const addressDiv = addressElements[0];
                 const addressP = addressDiv.querySelectorAll('p')[1];
                 if (addressP) addressP.textContent = shop.address;
+                window._bindShopDetailMapClick && window._bindShopDetailMapClick(shop.address);
             }
 
             // Update rating badge
@@ -1668,6 +1669,30 @@
                 goToPage(currentPage - 1);
             }
         }
+
+        // --- MỞ GOOGLE MAP VỚI QUERY ĐỊA CHỈ ---
+        function openOnGoogleMap(address) {
+            if (!address) return;
+            const q = encodeURIComponent(address);
+            const url = `https://www.google.com/maps/search/?api=1&query=${q}`;
+            window.open(url, '_blank');
+        }
+
+        // --- GÁN CLICK CHO MAP Ở TRANG CHI TIẾT ---
+        (function attachMiniMapClickHandler() {
+            const containerSelector = '#page-shop-detail .w-full.lg\\:w-80';
+
+            window._bindShopDetailMapClick = function (address) {
+                const container = document.querySelector(containerSelector);
+                if (!container) return;
+
+                container.style.cursor = 'pointer';
+                container.onclick = function () {
+                    openOnGoogleMap(address);
+                };
+            };
+        })();
+
 
         // Initialize
         showPage('home');
