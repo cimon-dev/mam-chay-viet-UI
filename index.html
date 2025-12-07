@@ -1666,6 +1666,29 @@
             { emoji: '🛒', name: 'Rau Xanh Tươi Hôm Nay', type: 'Cửa hàng nguyên liệu', address: '111 Vương Thừa Vũ, Q.Thanh Xuân', status: 'open', rating: 4.8, reviews: 94, distance: '0.4km', id: '#S006', menu: [] }
         ];
 
+        const SHOP_TYPES = [
+            "Quán ăn chay",
+            "Cửa hàng nguyên liệu",
+            "Cafe & Dessert",
+            "Cộng đồng chia sẻ",
+            "Sự kiện"
+        ];
+
+        // Populate the filter select (#filter-type) with these values
+        (function populateFilterTypes() {
+            const sel = document.getElementById('filter-type');
+            if (!sel) return;
+            // Clear existing options but keep the first "all" option
+            // If your first option is the "🌟 Tất cả", we keep it; otherwise this safely resets.
+            sel.innerHTML = '<option value="">🌟 Tất cả</option>';
+            SHOP_TYPES.forEach(type => {
+                const opt = document.createElement('option');
+                opt.value = type;
+                opt.textContent = type;
+                sel.appendChild(opt);
+            });
+        })();
+
         const blogPosts = [
             {
                 id: 'b1',
@@ -1807,59 +1830,90 @@
         }
 
         function renderTable() {
+            // 1. Lấy giá trị filter hiện tại
+            const selectedType = (document.getElementById('filter-type') && document.getElementById('filter-type').value) || '';
+            const selectedStatus = (document.getElementById('filter-status') && document.getElementById('filter-status').value) || '';
+            const keyword = (document.getElementById('search-shops') && document.getElementById('search-shops').value || '').toLowerCase();
+
+            // 2. Lọc dữ liệu dựa trên filters (type, status, keyword)
+            let filtered = shopsData.filter(shop => {
+                // filter by type
+                if (selectedType && shop.type !== selectedType) return false;
+
+                // filter by status: map display text -> internal value
+                if (selectedStatus && selectedStatus !== 'Tất cả') {
+                    if (selectedStatus === 'Đang mở cửa' && shop.status !== 'open') return false;
+                    if (selectedStatus === 'Đã đóng cửa' && shop.status !== 'closed') return false;
+                    // if future statuses needed, add mapping here
+                }
+
+                // filter by keyword (name / address / menu items)
+                if (keyword) {
+                    const hay = (shop.name + ' ' + shop.address + ' ' + (shop.menu || []).map(m => m.name).join(' ')).toLowerCase();
+                    if (!hay.includes(keyword)) return false;
+                }
+
+                return true;
+            });
+
+            // 3. Pagination trên filtered (thay vì nguyên shopsData)
             const startIdx = (currentPage - 1) * itemsPerPage;
             const endIdx = startIdx + itemsPerPage;
-            const pageData = shopsData.slice(startIdx, endIdx);
+            const pageData = filtered.slice(startIdx, endIdx);
 
+            // 4. Render rows
             const tableBody = document.getElementById('shops-table-body');
-            tableBody.innerHTML = pageData.map((shop, idx) => `
-                <tr class="hover:bg-${getColorClass(shop.type)}-50/50 transition-all cursor-pointer" onclick="viewShopDetail(${startIdx + idx})">
-                    <td class="px-3 py-3 text-sm" style="min-width: 280px; width: 280px;">
-                        <div class="flex items-center gap-3 flex-nowrap">
-                            <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-${getColorClass(shop.type)}-100 to-${getColorClass(shop.type)}-200 flex items-center justify-center text-2xl shadow-sm flex-shrink-0">
-                                ${shop.emoji}
-                            </div>
-                            <div class="min-w-0 flex-1">
-                                <p class="font-bold text-gray-900 truncate">${shop.name}</p>
-                                <p class="text-xs text-gray-500 truncate">ID: ${shop.id}</p>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-3 py-3 text-sm" style="min-width: 140px; width: 140px;"><span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-${getColorClass(shop.type)}-100 text-xs font-bold text-${getColorClass(shop.type)}-700 border border-${getColorClass(shop.type)}-200 whitespace-nowrap">
-                        ${shop.emoji} <span class="truncate">${shop.type}</span>
-                    </span></td>
-                    <td class="px-3 py-3 text-sm text-gray-600" style="min-width: 180px; width: 180px;">
-                        <div class="truncate">${shop.address}</div>
-                    </td>
-                    <td class="px-3 py-3 text-sm" style="min-width: 110px; width: 110px;"><span class="inline-flex items-center gap-1 px-2 py-1 rounded-full ${shop.status === 'open' ? 'bg-emerald-100 text-emerald-700' :
-                    shop.status === 'closed' ? 'bg-gray-100 text-gray-600' :
-                        'bg-blue-100 text-blue-700'
-                } text-xs font-bold whitespace-nowrap">
-                        <span class="h-2 w-2 rounded-full ${shop.status === 'open' ? 'bg-emerald-500 pulse-green' :
-                    shop.status === 'closed' ? 'bg-gray-400' :
-                        'bg-blue-500'
-                }"></span> ${shop.status === 'open' ? 'Đang mở' :
-                    shop.status === 'closed' ? 'Đã đóng' :
-                        'Sắp tới'
-                }
-                    </span></td>
-                    <td class="px-3 py-3 text-sm" style="min-width: 100px; width: 100px;">
-                        <div class="flex items-center gap-1 whitespace-nowrap"><span class="text-amber-500">⭐</span> <span class="font-bold text-gray-900">${shop.rating}</span> <span class="text-xs text-gray-500">(${shop.reviews})</span></div>
-                    </td>
-                    <td class="px-3 py-3 text-sm text-gray-600" style="min-width: 80px; width: 80px;">
-                        <div class="whitespace-nowrap">${shop.distance}</div>
-                    </td>
-                    <td class="px-3 py-3 text-sm" style="min-width: 150px; width: 150px;">
-                        <div class="flex justify-end gap-1 flex-nowrap"><button onclick="viewShopDetail(${startIdx + idx}); event.stopPropagation();" class="px-2 py-1.5 rounded-lg border-2 border-${getColorClass(shop.type)}-200 text-xs text-${getColorClass(shop.type)}-700 bg-${getColorClass(shop.type)}-50 font-medium hover:bg-${getColorClass(shop.type)}-100 transition-all flex-shrink-0">
-                            👁️ Xem
-                        </button> <button onclick="event.stopPropagation();" class="px-2 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-700 bg-white hover:bg-gray-50 transition-all flex-shrink-0">
-                            ✏️ Sửa
-                        </button></div>
-                    </td>
-                </tr>
-            `).join('');
+            if (!tableBody) return;
 
-            updatePagination();
+            tableBody.innerHTML = pageData.map((shop, idx) => `
+        <tr class="hover:bg-${getColorClass(shop.type)}-50/50 transition-all cursor-pointer" onclick="viewShopDetail(${startIdx + idx})">
+            <td class="px-3 py-3 text-sm" style="min-width: 280px; width: 280px;">
+                <div class="flex items-center gap-3 flex-nowrap">
+                    <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-${getColorClass(shop.type)}-100 to-${getColorClass(shop.type)}-200 flex items-center justify-center text-2xl shadow-sm flex-shrink-0">
+                        ${shop.emoji}
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="font-bold text-gray-900 truncate">${shop.name}</p>
+                        <p class="text-xs text-gray-500 truncate">ID: ${shop.id}</p>
+                    </div>
+                </div>
+            </td>
+            <td class="px-3 py-3 text-sm" style="min-width: 140px; width: 140px;">
+                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-${getColorClass(shop.type)}-100 text-xs font-bold text-${getColorClass(shop.type)}-700 border border-${getColorClass(shop.type)}-200 whitespace-nowrap">
+                    ${shop.emoji} <span class="truncate">${shop.type}</span>
+                </span>
+            </td>
+            <td class="px-3 py-3 text-sm text-gray-600" style="min-width: 180px; width: 180px;">
+                <div class="truncate">${shop.address}</div>
+            </td>
+            <td class="px-3 py-3 text-sm" style="min-width: 110px; width: 110px;">
+                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full ${shop.status === 'open' ? 'bg-emerald-100 text-emerald-700' :
+                    shop.status === 'closed' ? 'bg-gray-100 text-gray-700' : 'bg-blue-50 text-blue-700'}">
+                    <span class="h-2.5 w-2.5 rounded-full ${shop.status === 'open' ? 'bg-emerald-400' : shop.status === 'closed' ? 'bg-gray-400' : 'bg-blue-500'}"></span>
+                    ${shop.status === 'open' ? 'Đang mở' : shop.status === 'closed' ? 'Đã đóng' : 'Sắp tới'}
+                </span>
+            </td>
+            <td class="px-3 py-3 text-sm" style="min-width: 100px; width: 100px;">
+                <div class="flex items-center gap-1 whitespace-nowrap"><span class="text-amber-500">⭐</span> <span class="font-bold text-gray-900">${shop.rating}</span> <span class="text-xs text-gray-500">(${shop.reviews})</span></div>
+            </td>
+            <td class="px-3 py-3 text-sm text-gray-600" style="min-width: 80px; width: 80px;">
+                <div class="whitespace-nowrap">${shop.distance}</div>
+            </td>
+            <td class="px-3 py-3 text-sm" style="min-width: 150px; width: 150px;">
+                <div class="flex justify-end gap-1 flex-nowrap">
+                    <button onclick="viewShopDetail(${startIdx + idx}); event.stopPropagation();" class="px-2 py-1.5 rounded-lg border-2 border-${getColorClass(shop.type)}-200 text-xs text-${getColorClass(shop.type)}-700 bg-${getColorClass(shop.type)}-50 font-medium hover:bg-${getColorClass(shop.type)}-100 transition-all flex-shrink-0">
+                        👁️ Xem
+                    </button>
+                    <button onclick="event.stopPropagation();" class="px-2 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-700 bg-white hover:bg-gray-50 transition-all flex-shrink-0">
+                        ✏️ Sửa
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+
+            // 5. Update pagination info based on filtered length
+            updatePagination(filtered.length);
         }
 
         function getColorClass(type) {
@@ -1950,14 +2004,17 @@
             showPage('shop-detail');
         }
 
-        function updatePagination() {
-            const totalPages = Math.ceil(shopsData.length / itemsPerPage);
+        function updatePagination(totalItems) {
+            // if totalItems not provided, fallback to full length
+            const total = typeof totalItems === 'number' ? totalItems : shopsData.length;
+            const totalPages = Math.max(1, Math.ceil(total / itemsPerPage));
             const paginationInfo = document.getElementById('pagination-info');
             const startItem = (currentPage - 1) * itemsPerPage + 1;
-            const endItem = Math.min(currentPage * itemsPerPage, shopsData.length);
-            paginationInfo.textContent = `Hiển thị ${startItem}-${endItem} trong ${shopsData.length} địa điểm`;
+            const endItem = Math.min(currentPage * itemsPerPage, total);
+            if (paginationInfo) paginationInfo.textContent = `Hiển thị ${startItem}-${endItem} trong ${total} địa điểm`;
 
             const pageNumbers = document.getElementById('page-numbers');
+            if (!pageNumbers) return;
             pageNumbers.innerHTML = '';
 
             for (let i = 1; i <= totalPages; i++) {
@@ -1971,8 +2028,10 @@
                 pageNumbers.appendChild(btn);
             }
 
-            document.getElementById('btn-prev').disabled = currentPage === 1;
-            document.getElementById('btn-next').disabled = currentPage === totalPages;
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+            if (btnPrev) btnPrev.disabled = currentPage === 1;
+            if (btnNext) btnNext.disabled = currentPage === totalPages;
         }
 
         function renderBlog() {
@@ -2310,6 +2369,19 @@
                     setTimeout(closeDrawer, 120); // allow showPage to run first
                 }
             });
+
+            (function wireFilters() {
+                const typeSel = document.getElementById('filter-type');
+                const statusSel = document.getElementById('filter-status');
+                const searchInput = document.getElementById('search-shops');
+
+                if (typeSel) typeSel.addEventListener('change', () => { currentPage = 1; renderTable(); });
+                if (statusSel) statusSel.addEventListener('change', () => { currentPage = 1; renderTable(); });
+                if (searchInput) searchInput.addEventListener('input', () => { currentPage = 1; renderTable(); });
+
+                // ensure initial render
+                renderTable();
+            })();
 
             // Optional: close drawer if window resized to desktop
             window.addEventListener('resize', function () {
