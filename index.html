@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Vegan Places Finder - Tìm quán ăn chay</title>
+    <title>VegMap - Mầm chay việt</title>
+    <link rel="icon" type="image/png" href="./images/123.png">
     <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script><!-- Canva SDKs -->
     <script src="/_sdk/element_sdk.js"></script>
@@ -64,6 +65,11 @@
         .pulse-green {
             animation: pulse-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
+
+        body {
+            padding-top: 80px;
+            /* chừa chỗ cho navbar fixed */
+        }
     </style>
     <style>
         @view-transition {
@@ -75,7 +81,7 @@
 
 <body class="h-full w-full bg-[#F0FDF4]">
     <header class="w-full"><!-- Sticky Navbar -->
-        <nav class="w-full bg-white/95 backdrop-blur-md border-b border-green-100 sticky top-0 z-20 shadow-sm">
+        <nav class="w-full bg-white/95 backdrop-blur-md border-b border-green-100 fixed top-0 z-20 shadow-sm">
             <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between"><!-- Logo + Name -->
                 <div class="flex items-center gap-3">
                     <div
@@ -90,8 +96,13 @@
                 <div class="hidden md:flex items-center gap-2 text-sm font-medium text-gray-600"><button
                         data-page="home"
                         class="nav-link px-4 py-2 rounded-xl hover:bg-green-50 text-gray-800 transition-all"> 🏠 Trang
-                        chủ </button> <button data-page="shops"
-                        class="nav-link px-4 py-2 rounded-xl hover:bg-green-50 transition-all"> 🍜 Danh sách </button>
+                        chủ </button>
+                    <!-- thêm nút Blog (dán ngay sau nút home) -->
+                    <button data-page="blog" class="nav-link px-4 py-2 rounded-xl hover:bg-green-50 transition-all"> 💬
+                        Cộng đồng </button>
+
+                    <button data-page="shops" class="nav-link px-4 py-2 rounded-xl hover:bg-green-50 transition-all"> 🍜
+                        Danh sách </button>
                     <button data-page="map" class="nav-link px-4 py-2 rounded-xl hover:bg-green-50 transition-all"> 🗺️
                         Bản đồ </button> <button data-page="analytics"
                         class="nav-link px-4 py-2 rounded-xl hover:bg-green-50 transition-all"> 📊 Thống kê </button>
@@ -352,7 +363,31 @@
                         </div>
                     </div>
                 </section>
-            </section><!-- SHOPS LIST PAGE -->
+            </section>
+            <!-- START: BLOG PAGE (THÊM MỚI) -->
+            <section id="page-blog" class="page-section hidden space-y-6">
+                <header class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">💬 Cộng đồng - Chia sẻ trải nghiệm</h2>
+                        <p class="text-sm text-gray-600 mt-1">Bài viết, cảm nhận và bình luận gắn thẻ quán từ danh sách.
+                        </p>
+                    </div>
+
+                    <!-- NÚT TẠO BÀI VIẾT -->
+                    <button id="btn-create-post"
+                        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                        ✍️ Tạo bài viết
+                    </button>
+                </header>
+
+
+                <div id="blog-posts" class="space-y-4">
+                    <!-- Các bài viết sẽ được render bởi JS -->
+                </div>
+            </section>
+            <!-- END: BLOG PAGE -->
+
+            <!-- SHOPS LIST PAGE -->
             <section id="page-shops" class="page-section hidden space-y-6">
                 <header class="flex flex-wrap items-center justify-between gap-4">
                     <div>
@@ -1361,7 +1396,8 @@
             map: document.getElementById('page-map'),
             admin: document.getElementById('page-admin'),
             analytics: document.getElementById('page-analytics'),
-            auth: document.getElementById('page-auth')
+            auth: document.getElementById('page-auth'),
+            'blog': document.getElementById('page-blog'),
         };
 
         function showPage(key) {
@@ -1381,6 +1417,12 @@
             });
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // ở cuối function showPage(key) { ... }
+            if (key === 'blog') {
+                renderBlog();
+            }
+
         }
 
         document.querySelectorAll('[data-page]').forEach(btn => {
@@ -1469,6 +1511,137 @@
             { emoji: '🍜', name: 'Nước Sốt & Mì Chay Tuyệt Vời', type: 'Quán ăn chay', address: '999 Trần Duy Hưng, Q.Thanh Xuân', status: 'closed', rating: 4.3, reviews: 34, distance: '1.9km', id: '#V008', menu: [{ name: 'Mì xào chay', price: '42k', desc: 'Mì tươi xào, rau, hành hoa, sốt cà chua', tag: '' }, { name: 'Nước sốt cà chua', price: '15k', desc: 'Nước sốt cà chua homemade, không MSG', tag: '' }, { name: 'Canh rau chay', price: '28k', desc: 'Canh nấu từ rau tươi, nước dùng thanh', tag: '' }] },
             { emoji: '🛒', name: 'Rau Xanh Tươi Hôm Nay', type: 'Cửa hàng nguyên liệu', address: '111 Vương Thừa Vũ, Q.Thanh Xuân', status: 'open', rating: 4.8, reviews: 94, distance: '0.4km', id: '#S006', menu: [] }
         ];
+
+        const blogPosts = [
+            {
+                id: 'b1',
+                shopName: 'Chay Tịnh Tâm',
+                author: 'Nguyễn Minh Tuấn',
+                rating: 5,
+                tags: ['#chay0dong', '#quananchayngon'],
+                content: 'Không gian yên tĩnh, đồ ăn rất thanh đạm, giá sinh viên.',
+                image: 'https://cdn.tgdd.vn/Files/2020/10/27/1302444/ban-co-chac-rang-nhung-loai-do-chay-ban-dang-an-100-la-thuc-pham-chay-202010272338388095.jpg',
+                comments: [
+                    { user: 'Lan', text: 'Mình đi rồi, đúng là rất yên tĩnh.' },
+                    { user: 'Hải', text: 'Ăn xong thấy nhẹ bụng hẳn.' }
+                ]
+            },
+            {
+                id: 'b2',
+                shopName: 'Bún Chay Hương Sen',
+                author: 'Trần Ngọc Mai',
+                rating: 4,
+                tags: ['#buncha', '#anchay'],
+                content: 'Quán sạch, bún chay đậm vị, cuối tuần hơi đông.',
+                image: 'https://bizweb.dktcdn.net/100/524/612/files/bfec3aae22f05f268d34e82bf9d7178f.jpg?v=1740451344258',
+                comments: [
+                    { user: 'Phúc', text: 'Đông thật nhưng đáng chờ.' }
+                ]
+            },
+            {
+                id: 'b3',
+                shopName: 'Veggie House',
+                author: 'Lê Thanh Bình',
+                rating: 5,
+                tags: ['#vegan', '#healthy'],
+                content: 'Món Âu chay khá lạ miệng, trang trí đẹp.',
+                image: 'https://bizweb.dktcdn.net/100/524/612/files/80c7103fcec66813b69bc4358fead067.jpg?v=1740451455873',
+                comments: [
+                    { user: 'Ngọc', text: 'Chụp hình sống ảo đẹp lắm.' }
+                ]
+            },
+            {
+                id: 'b4',
+                shopName: 'Chay An Lạc',
+                author: 'Phạm Thị Hương',
+                rating: 3,
+                tags: ['#giaren', '#anchay'],
+                content: 'Giá ổn nhưng phục vụ hơi chậm.',
+                image: 'https://statics.vinpearl.com/com-chay-ha-noi-1_1692870441.jpg',
+                comments: []
+            },
+            {
+                id: 'b5',
+                shopName: 'Green Food',
+                author: 'Hoàng Minh Đức',
+                rating: 4,
+                tags: ['#eatclean', '#healthyfood'],
+                content: 'Phù hợp cho người tập gym, đồ ăn ít dầu.',
+                image: 'https://suckhoedoisong.qltns.mediacdn.vn/324455921873985536/2023/9/25/an-chay-1-1695615310939250177594.jpg',
+                comments: []
+            },
+            {
+                id: 'b6',
+                shopName: 'Cơm Chay Thiện Tâm',
+                author: 'Nguyễn Thị Hồng',
+                rating: 5,
+                tags: ['#comchay', '#ngonbo'],
+                content: 'Cơm phần đầy đặn, ăn no căng.',
+                image: 'https://www.cocoichibanya.vn/wp-content/uploads/2021/04/chay18.jpg',
+                comments: []
+            },
+            {
+                id: 'b7',
+                shopName: 'Nhà Hàng Chay Việt',
+                author: 'Phan Quốc Huy',
+                rating: 4,
+                tags: ['#tieccan', '#tiecchay'],
+                content: 'Đi tiệc chay khá sang, giá cao hơn bình dân.',
+                image: 'https://suckhoedoisong.qltns.mediacdn.vn/324455921873985536/2025/8/17/bua-an-thuan-chay-17554162363851230024169.jpg',
+                comments: []
+            },
+            {
+                id: 'b8',
+                shopName: 'Chay Tâm An',
+                author: 'Đỗ Mỹ Linh',
+                rating: 5,
+                tags: ['#anlanh', '#tinhkhiet'],
+                content: 'Không gian rất thư giãn, hợp người lớn tuổi.',
+                image: 'https://www.cocoichibanya.vn/wp-content/uploads/2021/04/chay1.jpg',
+                comments: []
+            },
+            {
+                id: 'b9',
+                shopName: 'Bếp Chay Xanh',
+                author: 'Võ Thành Đạt',
+                rating: 4,
+                tags: ['#veganlife', '#eatgreen'],
+                content: 'Nhiều món lạ, mỗi lần ghé là có món mới.',
+                image: 'https://cdnv2.tgdd.vn/mwg-static/common/Common/banh%20chao%20%281200%20x%20676%20px%29%20%2813%29.jpg',
+                comments: []
+            },
+            {
+                id: 'b10',
+                shopName: 'Chay 0 Đồng',
+                author: 'Nguyễn Thu Hà',
+                rating: 5,
+                tags: ['#chay0dong', '#thientam'],
+                content: 'Quán hỗ trợ người khó khăn, rất ý nghĩa.',
+                image: 'https://aulac-vegan.com/wp-content/uploads/2020/10/thuc-don-an-chay-truong-1.png',
+                comments: []
+            },
+            {
+                id: 'b11',
+                shopName: 'Chay Từ Bi',
+                author: 'Lâm Gia Bảo',
+                rating: 4,
+                tags: ['#quantam', '#sachse'],
+                content: 'Phục vụ nhẹ nhàng, không gian mộc mạc.',
+                image: 'https://media.anhp.vn/files/nganpham/NGAN_071528798541.jpg',
+                comments: []
+            },
+            {
+                id: 'b12',
+                shopName: 'Ẩm Thực Chay Phúc Lâm',
+                author: 'Trịnh Kim Ngân',
+                rating: 5,
+                tags: ['#sangtrong', '#anchaycao'],
+                content: 'Phù hợp tiếp khách, món ăn trình bày đẹp.',
+                image: 'https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2022/8/9/1078939/Cats.jpg',
+                comments: []
+            }
+        ];
+
 
         let currentPage = 1;
         let itemsPerPage = 5;
@@ -1647,6 +1820,115 @@
             document.getElementById('btn-prev').disabled = currentPage === 1;
             document.getElementById('btn-next').disabled = currentPage === totalPages;
         }
+
+        function renderBlog() {
+            const container = document.getElementById('blog-posts');
+            if (!container) return;
+            container.innerHTML = '';
+
+            blogPosts.forEach(post => {
+                // tìm shop tương ứng trong shopsData theo tên
+                const shop = shopsData.find(s => s.name === post.shopName);
+
+                container.insertAdjacentHTML('beforeend', `
+      <article class="rounded-2xl bg-white border border-green-100 shadow-md p-4 w-3/4 mx-auto">
+
+  <div class="flex items-center justify-between mb-1">
+    <div class="font-bold text-gray-900">${post.author}</div>
+    <div class="text-yellow-500 text-sm">
+      ${'★'.repeat(post.rating)}${'☆'.repeat(5 - post.rating)}
+    </div>
+  </div>
+
+  <div class="text-xs text-gray-500 mb-2">
+    Gắn thẻ quán:
+    <span 
+  onclick="goToShopFromBlog('${shop ? shop.name : ''}')"
+  class="px-2 py-0.5 bg-green-50 text-green-700 rounded-full cursor-pointer hover:bg-green-100">
+  ${shop ? shop.name : 'Không xác định'}
+</span>
+
+  </div>
+
+  <div class="flex flex-wrap gap-2 mb-2">
+    ${post.tags.map(tag => `
+      <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">${tag}</span>
+    `).join('')}
+  </div>
+
+  <div class="mb-3 text-gray-800 text-sm">
+    ${post.content}
+  </div>
+
+  ${post.image ? `
+    <div class="mb-3">
+      <img src="${post.image}" class="w-full rounded-md max-h-[360px] object-cover">
+    </div>
+  ` : ''}
+
+  <div class="pt-3 border-t border-green-50">
+    <div class="text-sm font-semibold text-gray-700 mb-2">
+      Bình luận (${post.comments.length})
+    </div>
+
+    <div class="space-y-2">
+      ${post.comments.map(c => `
+        <div class="bg-gray-50 p-2 rounded text-sm">
+          <strong>${c.user}:</strong> ${c.text}
+        </div>
+      `).join('')}
+    </div>
+  </div>
+</article>
+
+    `);
+            });
+        }
+
+        function goToShopFromBlog(shopName) {
+            // 1. Tìm shop theo tên
+            const shop = shopsData.find(s => s.name.trim() === shopName.trim());
+
+            if (!shop) {
+                alert('Không tìm thấy quán trong dữ liệu!');
+                console.log('ShopName từ blog:', shopName);
+                console.log('shopsData:', shopsData);
+                return;
+            }
+
+            // 2. Chuyển sang trang shop-detail (theo đúng hệ thống SPA của bạn)
+            if (typeof showPage === 'function') {
+                showPage('shop-detail');
+            }
+
+            // 3. GỌI THẲNG đúng logic hiển thị chi tiết shop mà bạn đang dùng
+            // File của bạn CHẮC CHẮN có 1 trong các hàm sau:
+            if (typeof viewShopDetail === 'function') {
+                viewShopDetail(shop);
+                return;
+            }
+
+            if (typeof openShopDetail === 'function') {
+                openShopDetail(shop.id);
+                return;
+            }
+
+            if (typeof renderShopDetail === 'function') {
+                renderShopDetail(shop);
+                return;
+            }
+
+            console.warn('Không tìm thấy hàm hiển thị chi tiết shop!');
+        }
+
+
+
+        // Sự kiện nút tạo bài viết (tạm thời demo)
+        document.addEventListener('click', function (e) {
+            if (e.target.id === 'btn-create-post') {
+                alert('Chức năng tạo bài viết đang phát triển.');
+            }
+        });
 
         function goToPage(page) {
             const totalPages = Math.ceil(shopsData.length / itemsPerPage);
