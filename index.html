@@ -70,6 +70,87 @@
             padding-top: 80px;
             /* chừa chỗ cho navbar fixed */
         }
+
+        /* ===== FIX TRIỆT ĐỂ NAV PC + MOBILE ===== */
+
+        /* MẶC ĐỊNH TRÊN PC: ẨN HOÀN TOÀN MENU MOBILE */
+        #mobile-nav-drawer {
+            display: none !important;
+        }
+
+        #mobile-nav-overlay {
+            display: none !important;
+        }
+
+        /* MẶC ĐỊNH TRÊN PC: ẨN NÚT 3 GẠCH */
+        .nav-mobile-toggle {
+            display: none !important;
+        }
+
+        /* ===== CHỈ ÁP DỤNG KHI Ở MOBILE ===== */
+        @media (max-width: 768px) {
+
+            /* HIỆN NÚT 3 GẠCH */
+            .nav-mobile-toggle {
+                display: inline-flex !important;
+            }
+
+            /* ẨN MENU NGANG PC */
+            .hidden.md\:flex {
+                display: none !important;
+            }
+
+            /* ẨN ĐĂNG NHẬP / ĐĂNG KÝ */
+            #auth-guest {
+                display: none !important;
+            }
+
+            #auth-user {
+                display: none !important;
+            }
+
+            /* HIỆN MENU MOBILE DẠNG DRAWER */
+            #mobile-nav-drawer {
+                display: block !important;
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 86%;
+                max-width: 360px;
+                height: 100vh;
+                background: #ffffff;
+                box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
+                transition: right 260ms ease;
+                z-index: 60;
+                padding: 20px;
+                overflow-y: auto;
+            }
+
+            #mobile-nav-drawer.open {
+                right: 0;
+            }
+
+            #mobile-nav-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0, 0, 0, 0.35);
+                backdrop-filter: blur(3px);
+                z-index: 20;
+                /* CAO HƠN NAV (20), THẤP HƠN DRAWER (60) */
+            }
+
+
+            #mobile-nav-overlay.show {
+                display: block !important;
+            }
+
+
+        }
+
+        /* ===== END FIX ===== */
     </style>
     <style>
         @view-transition {
@@ -80,6 +161,9 @@
 </head>
 
 <body class="h-full w-full bg-[#F0FDF4]">
+
+    <!-- MOBILE: overlay + drawer (ADD HERE, right after nav's inner wrapper) -->
+    <div id="mobile-nav-overlay"></div>
     <header class="w-full"><!-- Sticky Navbar -->
         <nav class="w-full bg-white/95 backdrop-blur-md border-b border-green-100 fixed top-0 z-20 shadow-sm">
             <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between"><!-- Logo + Name -->
@@ -92,7 +176,18 @@
                             class="text-base font-bold text-gray-900 tracking-tight"> VegMap </span> <span
                             class="text-xs text-green-600 font-medium">Mầm chay Việt 🍃</span>
                     </div>
-                </div><!-- Nav links -->
+                </div>
+                <!-- MOBILE: hamburger toggle (ADD HERE, place BEFORE desktop nav links div) -->
+                <button id="mobile-nav-btn"
+                    class="nav-mobile-toggle inline-flex items-center justify-center p-2 ml-auto rounded-md text-gray-700 hover:bg-green-50 transition-all"
+                    aria-label="Open menu" type="button">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+
+                <!-- Nav links -->
                 <div class="hidden md:flex items-center gap-2 text-sm font-medium text-gray-600"><button
                         data-page="home"
                         class="nav-link px-4 py-2 rounded-xl hover:bg-green-50 text-gray-800 transition-all"> 🏠 Trang
@@ -142,6 +237,59 @@
                     </div>
                 </div>
             </div>
+
+            <nav id="mobile-nav-drawer" aria-hidden="true">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="h-10 w-10 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-md">
+                            <span class="text-2xl">🌱</span>
+                        </div>
+                        <div class="flex flex-col leading-tight">
+                            <span class="text-base font-bold text-gray-900 tracking-tight">VegMap</span>
+                            <span class="text-xs text-green-600 font-medium">Mầm chay Việt</span>
+                        </div>
+                    </div>
+                    <button id="mobile-nav-close" class="p-2 rounded-md hover:bg-green-50" aria-label="Close menu">
+                        ✕
+                    </button>
+                </div>
+
+                <div class="space-y-3">
+                    <!-- Copy of nav links (only simple anchors, do not duplicate behavior) -->
+                    <button data-page="home"
+                        class="nav-link w-full text-left px-4 py-2 rounded-xl hover:bg-green-50 transition-all">🏠 Trang
+                        chủ</button>
+                    <button data-page="blog"
+                        class="nav-link w-full text-left px-4 py-2 rounded-xl hover:bg-green-50 transition-all">💬 Cộng
+                        đồng</button>
+                    <button data-page="shops"
+                        class="nav-link w-full text-left px-4 py-2 rounded-xl hover:bg-green-50 transition-all">🍜 Danh
+                        sách</button>
+                    <button data-page="map"
+                        class="nav-link w-full text-left px-4 py-2 rounded-xl hover:bg-green-50 transition-all">🗺️ Bản
+                        đồ</button>
+                    <button data-page="analytics"
+                        class="nav-link w-full text-left px-4 py-2 rounded-xl hover:bg-green-50 transition-all">📊 Thống
+                        kê</button>
+                    <button data-page="admin"
+                        class="nav-link w-full text-left px-4 py-2 rounded-xl hover:bg-green-50 transition-all">⚙️ Quản
+                        lý</button>
+                </div>
+
+                <div class="mt-6 border-t pt-4">
+                    <div class="text-sm text-gray-600 mb-2">Tài khoản</div>
+                    <div class="flex flex-col gap-2">
+                        <button data-page="auth"
+                            class="px-4 py-2 rounded-xl bg-green-50 text-green-700 border border-green-200 font-medium">Đăng
+                            nhập</button>
+                        <button
+                            class="px-4 py-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white">Đăng
+                            ký</button>
+                    </div>
+                </div>
+            </nav>
+
         </nav>
     </header>
     <main class="w-full min-h-full">
@@ -2121,8 +2269,54 @@
 
             applyConfig(window.elementSdk.config || defaultConfig);
         })();
+
     </script>
     <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9a9190c341c9043d',t:'MTc2NDkxNjk2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+    <script>
+        /* ===== START: Mobile nav drawer behaviors (ADD HERE) ===== */
+        (function () {
+            const btn = document.getElementById('mobile-nav-btn');
+            const closeBtn = document.getElementById('mobile-nav-close');
+            const drawer = document.getElementById('mobile-nav-drawer');
+            const overlay = document.getElementById('mobile-nav-overlay');
+
+            function openDrawer() {
+                if (drawer) drawer.classList.add('open');
+                if (overlay) overlay.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeDrawer() {
+                if (drawer) drawer.classList.remove('open');
+                if (overlay) overlay.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+
+            if (btn) btn.addEventListener('click', openDrawer);
+            if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+            if (overlay) overlay.addEventListener('click', closeDrawer);
+
+            // close drawer when any mobile nav-link clicked (delegation)
+            document.addEventListener('click', function (e) {
+                const el = e.target.closest && e.target.closest('.nav-link');
+                if (!el) return;
+                // if nav-link is inside drawer -> close drawer
+                if (drawer && drawer.contains(el)) {
+                    setTimeout(closeDrawer, 120); // allow showPage to run first
+                }
+            });
+
+            // Optional: close drawer if window resized to desktop
+            window.addEventListener('resize', function () {
+                if (window.innerWidth > 768) {
+                    closeDrawer();
+                }
+            });
+        })();
+        /* ===== END: Mobile nav drawer behaviors ===== */
+    </script>
+
+
+
 </body>
 
 </html>
