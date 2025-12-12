@@ -324,7 +324,7 @@
 
                             <button
                                 class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white text-green-700 text-base font-semibold border-2 border-green-200 hover:bg-green-50 hover:border-green-300 transition-all"
-                                data-page="map"> 🗺️ Xem bản đồ </button>
+                                data-page="map"> 🗺️ Bản đồ chay </button>
                         </div><!-- Stats -->
                         <div class="flex flex-wrap gap-6 pt-6 text-sm">
                             <div class="flex items-center gap-2">
@@ -1640,31 +1640,57 @@
 
         // ===== SHOPS DATA & PAGINATION =====
         const shopsData = [
+            // --- 5 phần tử đại diện 5 type ---
             { emoji: '🍜', name: 'Chay Tịnh Tâm', type: 'Quán ăn chay', address: '123 Ngõ 5 Phạm Văn Đồng, Q.Hoàn Kiếm', status: 'open', rating: 4.8, reviews: 124, distance: '800m', id: '#V001', menu: [{ name: 'Cơm tấm chay đặc biệt', price: '45k', desc: 'Cơm tấm, sườn chay nướng, chả chay, bì chay, trứng ốp la', tag: '🔥 Phổ biến' }, { name: 'Bún chay nước mắm', price: '40k', desc: 'Bún tươi, nước mắm chay đậm đà, rau thơm tươi', tag: '✨ Mới' }, { name: 'Canh chua chay', price: '25k', desc: 'Canh chua cay, tofu, dưa chuột, cà chua tươi', tag: '' }] },
-            { emoji: '🍜', name: 'Bún Chay Hương Sen', type: 'Quán ăn chay', address: '234 Phó Đức Chính, Q.Ba Đình', status: 'open', rating: 4.6, reviews: 78, distance: '1.5km', id: '#V002', menu: [{ name: 'Bún riêu chay', price: '45k', desc: 'Nước riêu tôm chay chua cay, bún tươi, rau sống', tag: '' }, { name: 'Bún đậu phụ', price: '40k', desc: 'Bún, đậu hũ ốp, tương cà chua, rau bóp', tag: '✨ Mới' }, { name: 'Bún cua chay', price: '50k', desc: 'Cua chay vàng, bún tươi, nước dùng đặc biệt', tag: '🔥 Phổ biến' }] },
-            { emoji: '🍜', name: 'Cơm Chay Hạnh Phúc', type: 'Quán ăn chay', address: '789 Lý Thái Tổ, Q.Đống Đa', status: 'open', rating: 4.7, reviews: 82, distance: '1.1km', id: '#V003', menu: [{ name: 'Cơm tấm chay', price: '38k', desc: 'Cơm tấm thơm, sườn chay, bì chay, trứng', tag: '' }, { name: 'Cơm chiên chay', price: '42k', desc: 'Cơm chiên với rau, hạt điều, nước tương chay', tag: '' }, { name: 'Cơm rau thập cẩm', price: '45k', desc: 'Cơm trắng, rau xanh tươi, nước sốt chua cay', tag: '' }] },
-            { emoji: '🍜', name: 'Phở Chay Bà Tuyền', type: 'Quán ăn chay', address: '456 Hoàng Hoa Thám, Q.Ba Đình', status: 'closed', rating: 4.5, reviews: 65, distance: '1.8km', id: '#V004', menu: [{ name: 'Phở rau nấm', price: '50k', desc: 'Nấm hương, nấm mèo, nước dùng đức từ xương chay', tag: '' }, { name: 'Phở đậu hũ', price: '48k', desc: 'Phở trắng, đậu hũ tơi, nước dùng thơm', tag: '' }, { name: 'Phở rau cải xanh', price: '52k', desc: 'Phở nóng hổi, rau cải xanh tươi, cà chua', tag: '' }] },
-            { emoji: '🍜', name: 'Bánh Mì Chay Sài Gòn', type: 'Quán ăn chay', address: '567 Ngô Quyền, Q.Hai Bà Trưng', status: 'open', rating: 4.4, reviews: 52, distance: '0.6km', id: '#V005', menu: [{ name: 'Bánh mì chay đầy đủ', price: '30k', desc: 'Bánh mì nóng giòn, pâté chay, rau sống, nước mắm', tag: '🔥 Phổ biến' }, { name: 'Bánh mì pâté chay', price: '35k', desc: 'Bánh mì giòn, pâté đậu phộu, bơ chay', tag: '' }, { name: 'Bánh mì ốp la chay', price: '32k', desc: 'Bánh mì, trứng ốp la chay, hành tây', tag: '' }] },
+
             { emoji: '🛒', name: 'Organic Store 24/7', type: 'Cửa hàng nguyên liệu', address: '45 Chủ Bộc, Q.Đống Đa', status: 'open', rating: 4.9, reviews: 89, distance: '1.2km', id: '#S001', menu: [] },
-            { emoji: '🛒', name: 'Chợ Chay Bình Tây', type: 'Cửa hàng nguyên liệu', address: '654 Quang Trung, Q.Hoàn Kiếm', status: 'open', rating: 4.5, reviews: 64, distance: '3.2km', id: '#S002', menu: [] },
-            { emoji: '🛒', name: 'Farm Fresh Vegan', type: 'Cửa hàng nguyên liệu', address: '789 Hàng Gà, Q.Hoàn Kiếm', status: 'open', rating: 4.8, reviews: 91, distance: '0.9km', id: '#S003', menu: [] },
-            { emoji: '🛒', name: 'Thảo Mộc Organic Shop', type: 'Cửa hàng nguyên liệu', address: '321 Bà Triệu, Q.Đống Đa', status: 'open', rating: 4.6, reviews: 73, distance: '2.3km', id: '#S004', menu: [] },
+
             { emoji: '☕', name: 'Vegan Cafe & Bakery', type: 'Cafe & Dessert', address: '88 Pasteur, Q.Hoàn Kiếm', status: 'closed', rating: 4.7, reviews: 56, distance: '2.1km', id: '#C001', menu: [{ name: 'Cà phê đậu nành', price: '25k', desc: 'Cà phê pha phin, sữa đậu nành tươi, đường cane', tag: '' }, { name: 'Bánh muffin chay', price: '30k', desc: 'Bánh muffin chocolate, không trứng, vị ngon lành', tag: '' }, { name: 'Sinh tố rau xanh', price: '35k', desc: 'Rau xanh tươi, dâu dũa, chuối, sữa hạt', tag: '' }] },
-            { emoji: '☕', name: 'Matcha & Me Vegan', type: 'Cafe & Dessert', address: '147 Trần Hưng Đạo, Q.Hoàn Kiếm', status: 'open', rating: 4.9, reviews: 112, distance: '0.9km', id: '#C002', menu: [{ name: 'Trà Matcha latte', price: '45k', desc: 'Matcha thơm, sữa đậu nành, toppings mochi', tag: '💚 Healthy' }, { name: 'Bánh donut chay', price: '28k', desc: 'Bánh donut phủ keo, nhân kem vani chay', tag: '✨ Mới' }, { name: 'Sinh tố dâu tây', price: '40k', desc: 'Dâu tây tươi, sữa cà phê, đá mềm', tag: '' }] },
-            { emoji: '☕', name: 'Cà Phê Thiền', type: 'Cafe & Dessert', address: '234 Trần Phú, Q.Ba Đình', status: 'open', rating: 4.5, reviews: 68, distance: '1.3km', id: '#C003', menu: [{ name: 'Cà phê đen', price: '20k', desc: 'Cà phê phin thơm, nước nóng, không đường', tag: '' }, { name: 'Bánh croissant chay', price: '32k', desc: 'Bánh croissant giòn, bơ chay, vani', tag: '' }, { name: 'Trà ginger chay', price: '30k', desc: 'Trà ginger tươi, mật ong, chanh tươi', tag: '' }] },
+
             { emoji: '🤝', name: 'Cộng Đồng Chay Hà Nội', type: 'Cộng đồng chia sẻ', address: '111 Lý Thái Tổ, Q.Hoàn Kiếm', status: 'open', rating: 4.8, reviews: 45, distance: '0.7km', id: '#C004', menu: [] },
-            { emoji: '🤝', name: 'Mạng Lưới Người Chay', type: 'Cộng đồng chia sẻ', address: '222 Tràng Tiền, Q.Hoàn Kiếm', status: 'open', rating: 4.6, reviews: 38, distance: '1.4km', id: '#C005', menu: [] },
+
             { emoji: '🎉', name: 'Lễ Hội Thực Phẩm Chay', type: 'Sự kiện', address: 'Công viên Tao Đàn, Q.Hoàn Kiếm', status: 'upcoming', rating: 5.0, reviews: 123, distance: '2km', id: '#E001', menu: [] },
+
+            // --- Các phần tử còn lại giữ nguyên thứ tự ban đầu ---
+            { emoji: '🍜', name: 'Bún Chay Hương Sen', type: 'Quán ăn chay', address: '234 Phó Đức Chính, Q.Ba Đình', status: 'open', rating: 4.6, reviews: 78, distance: '1.5km', id: '#V002', menu: [{ name: 'Bún riêu chay', price: '45k', desc: 'Nước riêu tôm chay chua cay, bún tươi, rau sống', tag: '' }, { name: 'Bún đậu phụ', price: '40k', desc: 'Bún, đậu hũ ốp, tương cà chua, rau bóp', tag: '✨ Mới' }, { name: 'Bún cua chay', price: '50k', desc: 'Cua chay vàng, bún tươi, nước dùng đặc biệt', tag: '🔥 Phổ biến' }] },
+
+            { emoji: '🍜', name: 'Cơm Chay Hạnh Phúc', type: 'Quán ăn chay', address: '789 Lý Thái Tổ, Q.Đống Đa', status: 'open', rating: 4.7, reviews: 82, distance: '1.1km', id: '#V003', menu: [{ name: 'Cơm tấm chay', price: '38k', desc: 'Cơm tấm thơm, sườn chay, bì chay, trứng', tag: '' }, { name: 'Cơm chiên chay', price: '42k', desc: 'Cơm chiên với rau, hạt điều, nước tương chay', tag: '' }, { name: 'Cơm rau thập cẩm', price: '45k', desc: 'Cơm trắng, rau xanh tươi, nước sốt chua cay', tag: '' }] },
+
+            { emoji: '🍜', name: 'Phở Chay Bà Tuyền', type: 'Quán ăn chay', address: '456 Hoàng Hoa Thám, Q.Ba Đình', status: 'closed', rating: 4.5, reviews: 65, distance: '1.8km', id: '#V004', menu: [{ name: 'Phở rau nấm', price: '50k', desc: 'Nấm hương, nấm mèo, nước dùng đức từ xương chay', tag: '' }, { name: 'Phở đậu hũ', price: '48k', desc: 'Phở trắng, đậu hũ tơi, nước dùng thơm', tag: '' }, { name: 'Phở rau cải xanh', price: '52k', desc: 'Phở nóng hổi, rau cải xanh tươi, cà chua', tag: '' }] },
+
+            { emoji: '🍜', name: 'Bánh Mì Chay Sài Gòn', type: 'Quán ăn chay', address: '567 Ngô Quyền, Q.Hai Bà Trưng', status: 'open', rating: 4.4, reviews: 52, distance: '0.6km', id: '#V005', menu: [{ name: 'Bánh mì chay đầy đủ', price: '30k', desc: 'Bánh mì nóng giòn, pâté chay, rau sống, nước mắm', tag: '🔥 Phổ biến' }, { name: 'Bánh mì pâté chay', price: '35k', desc: 'Bánh mì giòn, pâté đậu phộu, bơ chay', tag: '' }, { name: 'Bánh mì ốp la chay', price: '32k', desc: 'Bánh mì, trứng ốp la chay, hành tây', tag: '' }] },
+
+            { emoji: '🛒', name: 'Chợ Chay Bình Tây', type: 'Cửa hàng nguyên liệu', address: '654 Quang Trung, Q.Hoàn Kiếm', status: 'open', rating: 4.5, reviews: 64, distance: '3.2km', id: '#S002', menu: [] },
+
+            { emoji: '🛒', name: 'Farm Fresh Vegan', type: 'Cửa hàng nguyên liệu', address: '789 Hàng Gà, Q.Hoàn Kiếm', status: 'open', rating: 4.8, reviews: 91, distance: '0.9km', id: '#S003', menu: [] },
+
+            { emoji: '🛒', name: 'Thảo Mộc Organic Shop', type: 'Cửa hàng nguyên liệu', address: '321 Bà Triệu, Q.Đống Đa', status: 'open', rating: 4.6, reviews: 73, distance: '2.3km', id: '#S004', menu: [] },
+
+            { emoji: '☕', name: 'Matcha & Me Vegan', type: 'Cafe & Dessert', address: '147 Trần Hưng Đạo, Q.Hoàn Kiếm', status: 'open', rating: 4.9, reviews: 112, distance: '0.9km', id: '#C002', menu: [{ name: 'Trà Matcha latte', price: '45k', desc: 'Matcha thơm, sữa đậu nành, toppings mochi', tag: '💚 Healthy' }, { name: 'Bánh donut chay', price: '28k', desc: 'Bánh donut phủ keo, nhân kem vani chay', tag: '✨ Mới' }, { name: 'Sinh tố dâu tây', price: '40k', desc: 'Dâu tây tươi, sữa cà phê, đá mềm', tag: '' }] },
+
+            { emoji: '☕', name: 'Cà Phê Thiền', type: 'Cafe & Dessert', address: '234 Trần Phú, Q.Ba Đình', status: 'open', rating: 4.5, reviews: 68, distance: '1.3km', id: '#C003', menu: [{ name: 'Cà phê đen', price: '20k', desc: 'Cà phê phin thơm, nước nóng, không đường', tag: '' }, { name: 'Bánh croissant chay', price: '32k', desc: 'Bánh croissant giòn, bơ chay, vani', tag: '' }, { name: 'Trà ginger chay', price: '30k', desc: 'Trà ginger tươi, mật ong, chanh tươi', tag: '' }] },
+
+            { emoji: '🤝', name: 'Mạng Lưới Người Chay', type: 'Cộng đồng chia sẻ', address: '222 Tràng Tiền, Q.Hoàn Kiếm', status: 'open', rating: 4.6, reviews: 38, distance: '1.4km', id: '#C005', menu: [] },
+
             { emoji: '🎉', name: 'Hội Chợ Chay Xuân', type: 'Sự kiện', address: 'Hồ Gương, Q.Hoàn Kiếm', status: 'upcoming', rating: 4.9, reviews: 87, distance: '1.5km', id: '#E002', menu: [] },
+
             { emoji: '🍜', name: 'Cơm Niêu Chay An Khang', type: 'Quán ăn chay', address: '678 Chiến Thắng, Q.Ba Đình', status: 'open', rating: 4.7, reviews: 55, distance: '2.5km', id: '#V006', menu: [{ name: 'Cơm niêu chay', price: '55k', desc: 'Cơm nấu niêu, mồng tơi, nước dùng thơm', tag: '🔥 Phổ biến' }, { name: 'Canh chua chay', price: '25k', desc: 'Canh chua cay, tofu, rau tươi, cà chua', tag: '' }, { name: 'Cuốn chay', price: '35k', desc: 'Bánh trắng, rau sống, sốt mè rang', tag: '' }] },
+
             { emoji: '🍜', name: 'Mì Quảng Chay Thanh Hương', type: 'Quán ăn chay', address: '890 Giảng Võ, Q.Hai Bà Trưng', status: 'open', rating: 4.4, reviews: 41, distance: '3.1km', id: '#V007', menu: [{ name: 'Mì Quảng chay', price: '48k', desc: 'Mì Quảng, rau xanh tươi, nước dùng đặc biệt', tag: '' }, { name: 'Mì vàng xào', price: '45k', desc: 'Mì vàng giòn, rau, hành hoa, sốt cà chua', tag: '' }, { name: 'Bánh trắng nướng chay', price: '20k', desc: 'Bánh trắng tươi, sốt mè, rau sống', tag: '' }] },
+
             { emoji: '🛒', name: 'Nông Sản Sạch Đà Lạt', type: 'Cửa hàng nguyên liệu', address: '234 Tây Sơn, Q.Đống Đa', status: 'open', rating: 4.7, reviews: 79, distance: '1.7km', id: '#S005', menu: [] },
+
             { emoji: '☕', name: 'Cà Phê Sữa Đậu Nành', type: 'Cafe & Dessert', address: '456 Bà Triệu, Q.Đống Đa', status: 'open', rating: 4.6, reviews: 58, distance: '0.8km', id: '#C006', menu: [{ name: 'Cà phê sữa đậu nành', price: '28k', desc: 'Cà phê phin, sữa đậu nành thơm ngon', tag: '' }, { name: 'Bánh flan chay', price: '25k', desc: 'Bánh flan trứng chay, kem caramel', tag: '' }, { name: 'Caramel chay', price: '35k', desc: 'Sốt caramel chay, sữa hạt, nước đá', tag: '' }] },
+
             { emoji: '🤝', name: 'Nhóm Ăn Chay Lan Anh', type: 'Cộng đồng chia sẻ', address: '567 Hàng Bộc, Q.Hoàn Kiếm', status: 'open', rating: 4.5, reviews: 32, distance: '0.5km', id: '#C007', menu: [] },
+
             { emoji: '🎉', name: 'Workshop Nấu Ăn Chay', type: 'Sự kiện', address: 'Tầng 3 - 145 Trần Hưng Đạo, Q.Hoàn Kiếm', status: 'upcoming', rating: 4.8, reviews: 56, distance: '2.1km', id: '#E003', menu: [] },
+
             { emoji: '🍜', name: 'Nước Sốt & Mì Chay Tuyệt Vời', type: 'Quán ăn chay', address: '999 Trần Duy Hưng, Q.Thanh Xuân', status: 'closed', rating: 4.3, reviews: 34, distance: '1.9km', id: '#V008', menu: [{ name: 'Mì xào chay', price: '42k', desc: 'Mì tươi xào, rau, hành hoa, sốt cà chua', tag: '' }, { name: 'Nước sốt cà chua', price: '15k', desc: 'Nước sốt cà chua homemade, không MSG', tag: '' }, { name: 'Canh rau chay', price: '28k', desc: 'Canh nấu từ rau tươi, nước dùng thanh', tag: '' }] },
+
             { emoji: '🛒', name: 'Rau Xanh Tươi Hôm Nay', type: 'Cửa hàng nguyên liệu', address: '111 Vương Thừa Vũ, Q.Thanh Xuân', status: 'open', rating: 4.8, reviews: 94, distance: '0.4km', id: '#S006', menu: [] }
         ];
+
 
         const SHOP_TYPES = [
             "Quán ăn chay",
